@@ -59,13 +59,11 @@ function App() {
                 <Route path="/previous-papers" element={<PreviousPapersPage />} />
 
                 {/* Protected Admin Routes */}
-                <Route element={<ProtectedRoute />}>
-                  <Route path="/admin" element={<ProtectedRoute><AdminDashboardPage /></ProtectedRoute>} />
-                  <Route path="/admin/create-exam" element={<ProtectedRoute><CreateExamPage /></ProtectedRoute>} />
-                  <Route path="/admin/edit-exam/:id" element={<EditExamPage />} />
-                  <Route path="/admin/manage-tests" element={<ProtectedRoute><ManageTestsPage /></ProtectedRoute>} />
-                  <Route path="/admin/manage-tests/:category" element={<ManageTestsPage />} />
-                </Route>
+                <Route path="/admin" element={<ProtectedRoute><AdminDashboardPage /></ProtectedRoute>} />
+                <Route path="/admin/create-exam" element={<ProtectedRoute><CreateExamPage /></ProtectedRoute>} />
+                <Route path="/admin/edit-exam/:id" element={<ProtectedRoute><EditExamPage /></ProtectedRoute>} />
+                <Route path="/admin/manage-tests" element={<ProtectedRoute><ManageTestsPage /></ProtectedRoute>} />
+                <Route path="/admin/manage-tests/:category" element={<ProtectedRoute><ManageTestsPage /></ProtectedRoute>} />
 
                 {/* Catch all unknown routes */}
                 <Route path="*" element={<Navigate to="/" replace />} />

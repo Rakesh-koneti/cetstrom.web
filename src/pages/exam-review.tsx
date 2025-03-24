@@ -1,43 +1,142 @@
 import { useState, useEffect } from 'react';
-import { useParams, useNavigate, Link } from 'react-router-dom';
+import { useParams, Link } from 'react-router-dom';
 import { useTheme } from '../lib/theme-context';
+import { useAuth } from '../lib/auth-context';
 import { Exam } from '../lib/types';
+import { ExamService, ResultService } from '../services';
 import {
   CheckCircle,
   XCircle,
   ChevronLeft,
   ChevronRight,
   ArrowLeft,
+  Loader2,
+  AlertCircle
 } from 'lucide-react';
 
 export function ExamReviewPage() {
   const { examId } = useParams();
-  const navigate = useNavigate();
   const { theme } = useTheme();
+  const { user } = useAuth();
   const isDark = theme === 'dark';
   const [exam, setExam] = useState<Exam | null>(null);
   const [answers, setAnswers] = useState<Record<string, number>>({});
   const [currentSection, setCurrentSection] = useState(0);
   const [currentQuestion, setCurrentQuestion] = useState(0);
+  const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    // Load exam and answers
-    const exams = JSON.parse(localStorage.getItem('exams') || '[]');
-    const currentExam = exams.find((e: Exam) => e.id === examId);
-    if (currentExam) {
-      setExam(currentExam);
-    }
+    const loadExamAndAnswers = async () => {
+      if (!examId) return;
 
-    const results = JSON.parse(localStorage.getItem(`examResult_${examId}`) || 'null');
-    if (results?.answers) {
-      setAnswers(results.answers);
-    }
-  }, [examId]);
+      setIsLoading(true);
+      setError(null);
 
-  if (!exam) {
+      try {
+        // Load exam from database
+        const currentExam = await ExamService.getExamById(examId);
+        if (!currentExam) {
+          setError('Exam not found');
+          setIsLoading(false);
+          return;
+        }
+
+        setExam(currentExam);
+
+        // Load results from database
+        const userId = user?.email || 'anonymous';
+        const results = await ResultService.getResultsByExam(examId, userId);
+
+        if (results.length === 0) {
+          // Try to load from localStorage as fallback
+          const localResults = JSON.parse(localStorage.getItem(`examResult_${examId}`) || 'null');
+
+          if (localResults?.answers) {
+            setAnswers(localResults.answers);
+          } else {
+            // No results found
+            setError('No results found for this exam');
+          }
+        } else {
+          // Get the latest result
+          const latestResult = results[results.length - 1];
+
+          // Extract answers from the result
+          if (latestResult.answers) {
+            // Handle different formats of answers
+            if (latestResult.answers.userAnswers) {
+              setAnswers(latestResult.answers.userAnswers);
+            } else if (typeof latestResult.answers === 'object' && Object.keys(latestResult.answers).length > 0) {
+              // Try to find the userAnswers in the answers object
+              const possibleUserAnswers = latestResult.answers.userAnswers ||
+                                         latestResult.answers.answers ||
+                                         latestResult.answers;
+
+              if (possibleUserAnswers && typeof possibleUserAnswers === 'object') {
+                setAnswers(possibleUserAnswers);
+              } else {
+                setError('No valid answers found for this exam');
+              }
+            } else {
+              setError('No valid answers found for this exam');
+            }
+          } else {
+            setError('No answers found for this exam');
+          }
+        }
+      } catch (err) {
+        console.error('Error loading exam review:', err);
+        setError('Failed to load exam review');
+
+        // Try to load from localStorage as fallback
+        try {
+          const exams = JSON.parse(localStorage.getItem('exams') || '[]');
+          const currentExam = exams.find((e: Exam) => e.id === examId);
+          if (currentExam) {
+            setExam(currentExam);
+
+            const localResults = JSON.parse(localStorage.getItem(`examResult_${examId}`) || 'null');
+            if (localResults?.answers) {
+              setAnswers(localResults.answers);
+              setError(null); // Clear error if we found data in localStorage
+            }
+          }
+        } catch (localErr) {
+          console.error('Error loading from localStorage:', localErr);
+        }
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    loadExamAndAnswers();
+  }, [examId, user]);
+
+  if (isLoading) {
     return (
-      <div className="flex items-center justify-center min-h-screen">
+      <div className="flex flex-col items-center justify-center min-h-screen">
+        <Loader2 className={`h-12 w-12 animate-spin mb-4 ${isDark ? 'text-white' : 'text-gray-900'}`} />
         <p className={isDark ? 'text-white' : 'text-gray-900'}>Loading exam review...</p>
+      </div>
+    );
+  }
+
+  if (error || !exam) {
+    return (
+      <div className="flex flex-col items-center justify-center min-h-screen">
+        <AlertCircle className="h-12 w-12 text-yellow-500 mb-4" />
+        <p className={isDark ? 'text-white' : 'text-gray-900'}>{error || 'Exam not found'}</p>
+        <Link
+          to="/exams"
+          className={`mt-6 inline-flex items-center gap-2 px-4 py-2 rounded-lg ${
+            isDark
+              ? 'bg-violet-600 text-white hover:bg-violet-500'
+              : 'bg-violet-600 text-white hover:bg-violet-700'
+          }`}
+        >
+          Back to Tests
+        </Link>
       </div>
     );
   }
@@ -53,8 +152,9 @@ export function ExamReviewPage() {
     );
   }
 
+  // Handle different answer formats
   const userAnswer = answers[currentQuestionData.id];
-  const isCorrect = userAnswer === currentQuestionData.correctAnswer;
+  const isCorrect = userAnswer !== undefined && userAnswer === currentQuestionData.correctAnswer;
 
   return (
     <div className="mx-auto max-w-4xl px-4 sm:px-6 lg:px-8 py-8">
@@ -248,4 +348,4 @@ export function ExamReviewPage() {
       </div>
     </div>
   );
-} 
+}

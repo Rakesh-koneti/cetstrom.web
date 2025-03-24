@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { Link, useParams, useSearchParams, Navigate } from 'react-router-dom';
 import { useTheme } from '../../lib/theme-context';
 import { Exam, Stream } from '../../lib/types';
+import { ExamService, StreamService } from '../../services';
 import {
   Search,
   Filter,
@@ -65,46 +66,55 @@ export function StreamExamsPage() {
     const loadStreamExams = async () => {
       try {
         setIsLoading(true);
-        // Initialize exams array in localStorage if it doesn't exist
-        let storedExams = localStorage.getItem('exams');
-        if (!storedExams) {
-          localStorage.setItem('exams', '[]');
-          storedExams = '[]';
+
+        // Load exams from database
+        const filters: any = {
+          stream: currentStream
+          // We no longer filter by status to show all exams
+        };
+
+        if (selectedSubject) {
+          filters.subject = selectedSubject;
         }
 
-        // Load and parse exams
-        let allExams: Exam[] = [];
-        try {
-          allExams = JSON.parse(storedExams);
-        } catch (parseError) {
-          console.error('Error parsing exams:', parseError);
-          localStorage.setItem('exams', '[]');
-          allExams = [];
-        }
+        const exams = await ExamService.getExams(filters);
 
-        // Filter exams by stream and status
-        const streamExams = allExams.filter((exam) => {
-          if (!exam || typeof exam !== 'object') return false;
-          
-          const matchesStream = exam.stream === currentStream;
-          const matchesSubject = !selectedSubject || 
-                               (exam.subject && exam.subject.toLowerCase() === selectedSubject.toLowerCase());
-          const isScheduled = exam.status === 'scheduled';
-          
-          return matchesStream && matchesSubject && isScheduled;
+        // Apply any additional filtering that can't be done at the database level
+        const filteredExams = exams.filter(exam => {
+          // Apply difficulty filter if selected
+          if (selectedDifficulty && exam.difficulty !== selectedDifficulty) {
+            return false;
+          }
+
+          // Apply search term if provided
+          if (searchTerm && !exam.title.toLowerCase().includes(searchTerm.toLowerCase())) {
+            return false;
+          }
+
+          return true;
         });
 
-        setExams(streamExams);
+        setExams(filteredExams);
+
+        // Cache exams in localStorage for offline support
+        localStorage.setItem('stream_exams_' + currentStream, JSON.stringify(filteredExams));
       } catch (error) {
         console.error('Error loading exams:', error);
-        setExams([]);
+
+        // Try to load from cache if available
+        const cachedExams = localStorage.getItem('stream_exams_' + currentStream);
+        if (cachedExams) {
+          setExams(JSON.parse(cachedExams));
+        } else {
+          setExams([]);
+        }
       } finally {
         setIsLoading(false);
       }
     };
 
     loadStreamExams();
-  }, [currentStream, selectedSubject]);
+  }, [currentStream, selectedSubject, selectedDifficulty, searchTerm]);
 
   // Filter exams based on search and filters
   const filteredExams = exams.filter((exam) => {
@@ -219,7 +229,7 @@ export function StreamExamsPage() {
                 <h3 className={`text-lg font-semibold ${isDark ? 'text-white' : 'text-gray-900'}`}>
                   {exam.title}
                 </h3>
-                
+
                 <div className={`mt-2 text-sm ${isDark ? 'text-gray-400' : 'text-gray-500'}`}>
                   {exam.subject}
                 </div>
@@ -270,4 +280,4 @@ export function StreamExamsPage() {
       </div>
     </div>
   );
-} 
+}

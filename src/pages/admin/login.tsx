@@ -1,31 +1,87 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../../lib/auth-context';
-import { Lock, Mail } from 'lucide-react';
+import { Lock, Mail, WifiOff } from 'lucide-react';
+import { supabase, checkSupabaseConnection } from '../../lib/supabase';
 
 export function AdminLoginPage() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
   const [isLoading, setIsLoading] = useState(false);
+  const [isOffline, setIsOffline] = useState(false);
   const navigate = useNavigate();
   const { login } = useAuth();
+
+  // Check connection status on component mount
+  useEffect(() => {
+    const checkConnection = async () => {
+      const isConnected = await checkSupabaseConnection();
+      setIsOffline(!isConnected);
+      if (!isConnected) {
+        console.warn('Supabase connection failed. Using offline mode.');
+      }
+    };
+
+    checkConnection();
+  }, []);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError('');
     setIsLoading(true);
 
+    // If we're in offline mode, show an error
+    if (isOffline) {
+      setError('Cannot connect to the database. Please check your internet connection.');
+      setIsLoading(false);
+      return;
+    }
+
     try {
-      // Check for hardcoded admin credentials
-      if (email === 'krakesh.gates@gmail.com' && password === 'Rakesh1234') {
-        await login({ email, isAdmin: true });
-        navigate('/admin/dashboard');
-      } else {
-        setError('Invalid credentials');
+      console.log('Attempting to authenticate admin user:', email);
+
+      // Use the authenticate_admin RPC function
+      const { data, error } = await supabase
+        .rpc('authenticate_admin', {
+          email_input: email,
+          password_input: password
+        });
+
+      if (error) {
+        console.error('Authentication error:', error);
+
+        // Check if it's a network error
+        if (error.code === 'NETWORK_ERROR' || error.message?.includes('network') || error.message?.includes('fetch')) {
+          setIsOffline(true);
+          setError('Network error. Please check your connection.');
+        } else {
+          setError('Authentication failed. Please check your credentials.');
+        }
+        return;
       }
+
+      console.log('Authentication result:', data);
+
+      if (!data || !data.authenticated) {
+        setError(data?.error || 'Invalid credentials');
+        return;
+      }
+
+      // Authentication successful
+      await login({ email, isAdmin: true });
+      navigate('/admin', { replace: true });
     } catch (err) {
-      setError('Failed to login. Please try again.');
+      console.error('Login error:', err);
+
+      // Check if it's a network error
+      const errorMessage = String(err);
+      if (errorMessage.includes('network') || errorMessage.includes('fetch') || errorMessage.includes('connection')) {
+        setIsOffline(true);
+        setError('Network error. Please check your internet connection.');
+      } else {
+        setError('Failed to login. Please try again.');
+      }
     } finally {
       setIsLoading(false);
     }
@@ -41,6 +97,12 @@ export function AdminLoginPage() {
           <p className="mt-2 text-center text-sm text-gray-600 dark:text-gray-400">
             Access the admin dashboard
           </p>
+          {isOffline && (
+            <div className="mt-4 flex items-center justify-center gap-2 text-amber-600 dark:text-amber-400">
+              <WifiOff className="h-4 w-4" />
+              <span className="text-sm font-medium">Connection Error - Please check your internet connection</span>
+            </div>
+          )}
         </div>
 
         <form className="mt-8 space-y-6" onSubmit={handleSubmit}>

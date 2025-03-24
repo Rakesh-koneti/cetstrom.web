@@ -1,19 +1,23 @@
 import { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { useTheme } from '../lib/theme-context';
+import { useAuth } from '../lib/auth-context';
 import { Exam } from '../lib/types';
+import { ExamService, ResultService } from '../services';
 import {
   Clock,
   ChevronLeft,
   ChevronRight,
   Save,
   AlertTriangle,
+  Loader2,
 } from 'lucide-react';
 
 export function ExamPage() {
   const { examId } = useParams();
   const navigate = useNavigate();
   const { theme } = useTheme();
+  const { user } = useAuth();
   const isDark = theme === 'dark';
   const [exam, setExam] = useState<Exam | null>(null);
   const [currentSection, setCurrentSection] = useState(0);
@@ -22,37 +26,57 @@ export function ExamPage() {
   const [timeLeft, setTimeLeft] = useState<number>(0);
   const [startTime] = useState<number>(Date.now());
   const [error, setError] = useState<string | null>(null);
+  const [isLoading, setIsLoading] = useState<boolean>(true);
 
   useEffect(() => {
-    // Load exam data
-    const exams = JSON.parse(localStorage.getItem('exams') || '[]');
-    const currentExam = exams.find((e: Exam) => e.id === examId);
-    
-    if (!currentExam) {
-      setError('Exam not found');
-      return;
-    }
-
-    if (!currentExam.sections || currentExam.sections.length === 0) {
-      setError('This exam has no questions');
-      return;
-    }
-
-    let hasQuestions = false;
-    for (const section of currentExam.sections) {
-      if (section.questions && section.questions.length > 0) {
-        hasQuestions = true;
-        break;
+    // Load exam data from database
+    const loadExam = async () => {
+      if (!examId) {
+        setError('Invalid exam ID');
+        setIsLoading(false);
+        return;
       }
-    }
 
-    if (!hasQuestions) {
-      setError('This exam has no questions');
-      return;
-    }
+      try {
+        const currentExam = await ExamService.getExamById(examId);
 
-    setExam(currentExam);
-    setTimeLeft(currentExam.duration * 60);
+        if (!currentExam) {
+          setError('Exam not found');
+          setIsLoading(false);
+          return;
+        }
+
+        if (!currentExam.sections || currentExam.sections.length === 0) {
+          setError('This exam has no questions');
+          setIsLoading(false);
+          return;
+        }
+
+        let hasQuestions = false;
+        for (const section of currentExam.sections) {
+          if (section.questions && section.questions.length > 0) {
+            hasQuestions = true;
+            break;
+          }
+        }
+
+        if (!hasQuestions) {
+          setError('This exam has no questions');
+          setIsLoading(false);
+          return;
+        }
+
+        setExam(currentExam);
+        setTimeLeft(currentExam.duration * 60);
+        setIsLoading(false);
+      } catch (err) {
+        console.error('Error loading exam:', err);
+        setError('Failed to load exam. Please try again.');
+        setIsLoading(false);
+      }
+    };
+
+    loadExam();
   }, [examId]);
 
   useEffect(() => {
@@ -77,56 +101,85 @@ export function ExamPage() {
     }));
   };
 
-  const handleSubmit = () => {
-    if (!exam) return;
+  const handleSubmit = async () => {
+    if (!exam || !examId) return;
+    setIsLoading(true);
 
-    let correctAnswers = 0;
-    let wrongAnswers = 0;
-    let totalScore = 0;
+    try {
+      let correctAnswers = 0;
+      let wrongAnswers = 0;
+      let totalScore = 0;
 
-    exam.sections.forEach((section) => {
-      section.questions.forEach((question) => {
-        const userAnswer = answers[question.id];
-        if (userAnswer === undefined) return;
+      exam.sections.forEach((section) => {
+        section.questions.forEach((question) => {
+          const userAnswer = answers[question.id];
+          if (userAnswer === undefined) return;
 
-        if (userAnswer === question.correctAnswer) {
-          correctAnswers++;
-          totalScore += question.weightage;
-        } else {
-          wrongAnswers++;
-          totalScore -= section.negativeMarking;
+          if (userAnswer === question.correctAnswer) {
+            correctAnswers++;
+            totalScore += question.weightage;
+          } else {
+            wrongAnswers++;
+            totalScore -= section.negativeMarking;
+          }
+        });
+      });
+
+      const totalQuestions = exam.sections.reduce(
+        (sum, section) => sum + section.questions.length,
+        0
+      );
+
+      const percentage = (totalScore / (totalQuestions * exam.markingScheme.defaultWeightage)) * 100;
+      const timeTaken = Math.floor((Date.now() - startTime) / 1000);
+
+      const results = {
+        totalQuestions,
+        correctAnswers,
+        wrongAnswers,
+        score: totalScore,
+        percentage,
+        timeTaken,
+        isPassed: percentage >= exam.markingScheme.passingPercentage,
+        answers,
+      };
+
+      // Save results to localStorage as backup
+      localStorage.setItem(`examResult_${examId}`, JSON.stringify(results));
+
+      // Save results to database
+      const userId = user?.email || 'anonymous';
+      await ResultService.saveResult({
+        testId: examId,
+        userId,
+        score: totalScore,
+        answers: {
+          userAnswers: answers,
+          correctAnswers,
+          wrongAnswers,
+          timeTaken,
+          percentage,
+          isPassed: percentage >= exam.markingScheme.passingPercentage
         }
       });
-    });
 
-    const totalQuestions = exam.sections.reduce(
-      (sum, section) => sum + section.questions.length,
-      0
-    );
+      // We no longer mark the exam as completed so it remains visible in the list
+      // This allows users to take the exam multiple times
 
-    const percentage = (totalScore / (totalQuestions * exam.markingScheme.defaultWeightage)) * 100;
-    const timeTaken = Math.floor((Date.now() - startTime) / 1000);
+      // Update the exam in localStorage but don't mark it as completed
+      const exams = JSON.parse(localStorage.getItem('exams') || '[]');
+      const examIndex = exams.findIndex((e: Exam) => e.id === examId);
+      if (examIndex !== -1) {
+        // Just update the lastAttemptedAt field instead of marking as completed
+        exams[examIndex].lastAttemptedAt = new Date().toISOString();
+        localStorage.setItem('exams', JSON.stringify(exams));
+      }
 
-    const results = {
-      totalQuestions,
-      correctAnswers,
-      wrongAnswers,
-      score: totalScore,
-      percentage,
-      timeTaken,
-      isPassed: percentage >= exam.markingScheme.passingPercentage,
-      answers,
-    };
-
-    // Save results
-    localStorage.setItem(`examResult_${examId}`, JSON.stringify(results));
-
-    // Update exam status
-    const exams = JSON.parse(localStorage.getItem('exams') || '[]');
-    const examIndex = exams.findIndex((e: Exam) => e.id === examId);
-    if (examIndex !== -1) {
-      exams[examIndex].status = 'completed';
-      localStorage.setItem('exams', JSON.stringify(exams));
+      setIsLoading(false);
+    } catch (error) {
+      console.error('Error submitting exam:', error);
+      // Still navigate to results page even if there's an error
+      // The results are saved in localStorage as backup
     }
 
     // Navigate to results page
@@ -155,10 +208,33 @@ export function ExamPage() {
     );
   }
 
+  if (isLoading) {
+    return (
+      <div className="flex flex-col items-center justify-center min-h-screen">
+        <Loader2 className={`h-12 w-12 animate-spin mb-4 ${isDark ? 'text-white' : 'text-gray-900'}`} />
+        <p className={isDark ? 'text-white' : 'text-gray-900'}>Loading exam...</p>
+      </div>
+    );
+  }
+
   if (!exam) {
     return (
-      <div className="flex items-center justify-center min-h-screen">
-        <p className={isDark ? 'text-white' : 'text-gray-900'}>Loading exam...</p>
+      <div className="flex flex-col items-center justify-center min-h-screen">
+        <div className={`text-center ${isDark ? 'text-white' : 'text-gray-900'}`}>
+          <AlertTriangle className="h-12 w-12 mx-auto mb-4 text-yellow-500" />
+          <h2 className="text-2xl font-bold mb-2">Exam Not Found</h2>
+          <p className="text-lg">{error || 'Unable to load the exam'}</p>
+          <button
+            onClick={() => navigate('/exams')}
+            className={`mt-6 inline-flex items-center gap-2 px-4 py-2 rounded-lg ${
+              isDark
+                ? 'bg-violet-600 text-white hover:bg-violet-500'
+                : 'bg-violet-600 text-white hover:bg-violet-700'
+            }`}
+          >
+            Back to Tests
+          </button>
+        </div>
       </div>
     );
   }
@@ -211,14 +287,24 @@ export function ExamPage() {
           </div>
           <button
             onClick={handleSubmit}
+            disabled={isLoading}
             className={`inline-flex items-center gap-2 px-4 py-2 rounded-lg ${
               isDark
                 ? 'bg-violet-600 text-white hover:bg-violet-500'
                 : 'bg-violet-600 text-white hover:bg-violet-700'
-            }`}
+            } ${isLoading ? 'opacity-70 cursor-not-allowed' : ''}`}
           >
-            <Save className="h-5 w-5" />
-            Submit
+            {isLoading ? (
+              <>
+                <Loader2 className="h-5 w-5 animate-spin" />
+                Submitting...
+              </>
+            ) : (
+              <>
+                <Save className="h-5 w-5" />
+                Submit
+              </>
+            )}
           </button>
         </div>
       </div>

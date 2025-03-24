@@ -2,11 +2,11 @@ import React, { useEffect, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../../lib/auth-context';
 import { Exam, Stream } from '../../lib/types';
+import { ExamService } from '../../services';
 import {
   PlusCircle,
   Brain,
   Beaker,
-  Leaf,
   Target,
   Calendar,
   BarChart,
@@ -28,13 +28,6 @@ const streamInfo = {
     bgColor: 'bg-purple-50',
     borderColor: 'border-purple-200',
   },
-  agriculture: {
-    title: 'Agriculture',
-    icon: Leaf,
-    color: 'text-green-600',
-    bgColor: 'bg-green-50',
-    borderColor: 'border-green-200',
-  },
 };
 
 export function AdminDashboardPage() {
@@ -54,12 +47,7 @@ export function AdminDashboardPage() {
     agriculture: { total: 0, scheduled: 0, completed: 0, daily: 0, weekly: 0, monthly: 0 },
   });
 
-  // Initialize empty exams array if not exists
-  useEffect(() => {
-    if (!localStorage.getItem('exams')) {
-      localStorage.setItem('exams', JSON.stringify([]));
-    }
-  }, []);
+  // No need to initialize localStorage anymore as we're using the database
 
   // Load stats when component mounts and authentication state changes
   useEffect(() => {
@@ -70,22 +58,24 @@ export function AdminDashboardPage() {
 
       try {
         setIsLoading(true);
-        const exams = JSON.parse(localStorage.getItem('exams') || '[]') as Exam[];
+
+        // Load exams from database
+        const exams = await ExamService.getExams();
+
         const newStats = {
           engineering: { total: 0, scheduled: 0, completed: 0, daily: 0, weekly: 0, monthly: 0 },
           pharmacy: { total: 0, scheduled: 0, completed: 0, daily: 0, weekly: 0, monthly: 0 },
-          agriculture: { total: 0, scheduled: 0, completed: 0, daily: 0, weekly: 0, monthly: 0 },
         };
 
         exams.forEach(exam => {
           if (exam.stream && exam.stream in newStats) {
             const streamStat = newStats[exam.stream as Stream];
             streamStat.total++;
-            
+
             if (exam.category) {
               streamStat[exam.category]++;
             }
-            
+
             if (exam.status) {
               streamStat[exam.status]++;
             }
@@ -95,6 +85,34 @@ export function AdminDashboardPage() {
         setStreamStats(newStats);
       } catch (error) {
         console.error('Error loading exam statistics:', error);
+
+        // Try to load from localStorage as fallback
+        try {
+          const exams = JSON.parse(localStorage.getItem('exams') || '[]') as Exam[];
+          const newStats = {
+            engineering: { total: 0, scheduled: 0, completed: 0, daily: 0, weekly: 0, monthly: 0 },
+            pharmacy: { total: 0, scheduled: 0, completed: 0, daily: 0, weekly: 0, monthly: 0 },
+          };
+
+          exams.forEach(exam => {
+            if (exam.stream && exam.stream in newStats) {
+              const streamStat = newStats[exam.stream as Stream];
+              streamStat.total++;
+
+              if (exam.category) {
+                streamStat[exam.category]++;
+              }
+
+              if (exam.status) {
+                streamStat[exam.status]++;
+              }
+            }
+          });
+
+          setStreamStats(newStats);
+        } catch (fallbackError) {
+          console.error('Error loading fallback exam statistics:', fallbackError);
+        }
       } finally {
         setIsLoading(false);
       }

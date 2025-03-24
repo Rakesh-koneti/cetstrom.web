@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { Link, useParams } from 'react-router-dom';
 import { useTheme } from '../../lib/theme-context';
 import { Exam, Stream } from '../../lib/types';
+import { ExamService } from '../../services';
 import { PlusCircle, Pencil, Trash2, Loader2 } from 'lucide-react';
 
 export function ManageTestsPage() {
@@ -15,35 +16,40 @@ export function ManageTestsPage() {
     const loadTests = async () => {
       try {
         setIsLoading(true);
-        // Initialize exams array if it doesn't exist
-        let storedExams = localStorage.getItem('exams');
-        if (!storedExams) {
-          localStorage.setItem('exams', '[]');
-          storedExams = '[]';
-        }
 
-        // Load and parse exams
-        let allExams: Exam[] = [];
-        try {
-          allExams = JSON.parse(storedExams);
-          if (!Array.isArray(allExams)) {
-            throw new Error('Stored exams is not an array');
-          }
-        } catch (parseError) {
-          console.error('Error parsing exams:', parseError);
-          localStorage.setItem('exams', '[]');
-          allExams = [];
-        }
+        // Load exams from database
+        const filters: any = {};
 
         // Filter by category if specified
-        const filteredTests = category
-          ? allExams.filter(exam => exam && exam.stream === category)
-          : allExams;
+        if (category) {
+          filters.stream = category;
+        }
 
-        setTests(filteredTests);
+        const exams = await ExamService.getExams(filters);
+        setTests(exams);
+
+        // Cache exams in localStorage for offline support
+        localStorage.setItem('admin_exams', JSON.stringify(exams));
       } catch (error) {
         console.error('Error loading tests:', error);
-        setTests([]);
+
+        // Try to load from localStorage as fallback
+        try {
+          const storedExams = localStorage.getItem('admin_exams');
+          if (storedExams) {
+            const allExams = JSON.parse(storedExams);
+            // Filter by category if specified
+            const filteredTests = category
+              ? allExams.filter(exam => exam && exam.stream === category)
+              : allExams;
+            setTests(filteredTests);
+          } else {
+            setTests([]);
+          }
+        } catch (fallbackError) {
+          console.error('Error loading fallback exams:', fallbackError);
+          setTests([]);
+        }
       } finally {
         setIsLoading(false);
       }
@@ -58,12 +64,26 @@ export function ManageTestsPage() {
     }
 
     try {
-      const updatedTests = tests.filter(test => test.id !== testId);
-      localStorage.setItem('exams', JSON.stringify(updatedTests));
-      setTests(updatedTests);
+      setIsLoading(true);
+
+      // Delete from database
+      const success = await ExamService.deleteExam(testId);
+
+      if (success) {
+        // Update local state
+        const updatedTests = tests.filter(test => test.id !== testId);
+        setTests(updatedTests);
+
+        // Update localStorage cache
+        localStorage.setItem('admin_exams', JSON.stringify(updatedTests));
+      } else {
+        throw new Error('Failed to delete exam');
+      }
     } catch (error) {
       console.error('Error deleting test:', error);
       alert('Failed to delete test. Please try again.');
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -81,7 +101,7 @@ export function ManageTestsPage() {
         <div className="sm:flex sm:items-center sm:justify-between">
           <div>
             <h1 className={`text-2xl font-semibold ${isDark ? 'text-white' : 'text-gray-900'}`}>
-              {category 
+              {category
                 ? `${category.charAt(0).toUpperCase() + category.slice(1)} Tests`
                 : 'All Tests'}
             </h1>

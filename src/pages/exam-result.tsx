@@ -1,23 +1,28 @@
 import { useState, useEffect } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import { useTheme } from '../lib/theme-context';
+import { useAuth } from '../lib/auth-context';
 import { Exam, ExamResult } from '../lib/types';
+import { ExamService, ResultService } from '../services';
 import {
   Award,
   CheckCircle,
   XCircle,
   AlertCircle,
   ArrowLeft,
-  History
+  History,
+  Loader2
 } from 'lucide-react';
 
 export function ExamResultPage() {
   const { examId } = useParams();
   const { theme } = useTheme();
+  const { user } = useAuth();
   const isDark = theme === 'dark';
   const [exam, setExam] = useState<Exam | null>(null);
   const [currentAttempt, setCurrentAttempt] = useState<number>(1);
   const [attempts, setAttempts] = useState<ExamResult[]>([]);
+  const [isLoading, setIsLoading] = useState<boolean>(true);
   const [results, setResults] = useState<{
     totalQuestions: number;
     correctAnswers: number;
@@ -33,52 +38,143 @@ export function ExamResultPage() {
   } | null>(null);
 
   useEffect(() => {
-    // Load exam and all attempts from localStorage
-    const exams = JSON.parse(localStorage.getItem('exams') || '[]');
-    const currentExam = exams.find((e: Exam) => e.id === examId);
-    if (currentExam) {
-      setExam(currentExam);
-    }
+    const loadExamAndResults = async () => {
+      if (!examId) return;
 
-    // Load all attempts for this exam
-    const allResults = JSON.parse(localStorage.getItem(`examResults_${examId}`) || '[]');
-    setAttempts(allResults);
+      setIsLoading(true);
+      try {
+        // Load exam from database
+        const currentExam = await ExamService.getExamById(examId);
+        if (currentExam) {
+          setExam(currentExam);
+        }
 
-    // Set the latest attempt as current
-    if (allResults.length > 0) {
-      const latestAttempt = Math.max(...allResults.map((r: ExamResult) => r.attemptNumber));
-      setCurrentAttempt(latestAttempt);
-      const currentResults = allResults.find((r: ExamResult) => r.attemptNumber === latestAttempt);
-      if (currentResults) {
-        const totalQuestions = currentResults.sectionWiseMarks.reduce((acc: number, s: { totalQuestions: number }) => acc + s.totalQuestions, 0);
-        const correctAnswers = currentResults.sectionWiseMarks.reduce((acc: number, s: { correctAnswers: number }) => acc + s.correctAnswers, 0);
-        const wrongAnswers = currentResults.sectionWiseMarks.reduce((acc: number, s: { wrongAnswers: number }) => acc + s.wrongAnswers, 0);
-        const skippedAnswers = totalQuestions - (correctAnswers + wrongAnswers);
+        // Load all attempts for this exam
+        const userId = user?.email || 'anonymous';
+        const allResults = await ResultService.getResultsByExam(examId, userId);
 
-        setResults({
-          totalQuestions,
-          correctAnswers,
-          wrongAnswers,
-          score: currentResults.obtainedMarks,
-          percentage: (currentResults.obtainedMarks / currentResults.totalMarks) * 100,
-          timeTaken: currentResults.timeTaken,
-          isPassed: currentResults.status === 'pass',
-          attemptNumber: currentResults.attemptNumber,
-          correctPercentage: (correctAnswers / totalQuestions) * 100,
-          wrongPercentage: (wrongAnswers / totalQuestions) * 100,
-          skippedPercentage: (skippedAnswers / totalQuestions) * 100
-        });
+        if (allResults.length === 0) {
+          // Try to load from localStorage as fallback
+          const localResults = JSON.parse(localStorage.getItem(`examResult_${examId}`) || '{}');
+
+          if (localResults && localResults.score !== undefined) {
+            // Create a result object from localStorage data
+            const mockResult: ExamResult = {
+              sessionId: `local_${Date.now()}`,
+              examId: examId,
+              userId: userId,
+              attemptNumber: 1,
+              totalMarks: currentExam?.sections.reduce(
+                (sum, section) => sum + section.questions.length * (currentExam?.markingScheme.defaultWeightage || 1),
+                0
+              ) || 0,
+              obtainedMarks: localResults.score,
+              sectionWiseMarks: [{
+                sectionId: 'section1',
+                sectionName: 'All Sections',
+                totalQuestions: localResults.totalQuestions,
+                correctAnswers: localResults.correctAnswers,
+                wrongAnswers: localResults.wrongAnswers,
+                obtainedMarks: localResults.score,
+                totalMarks: localResults.totalQuestions
+              }],
+              timeTaken: localResults.timeTaken,
+              status: localResults.isPassed ? 'pass' : 'fail',
+              submittedAt: new Date().toISOString()
+            };
+
+            setAttempts([mockResult]);
+
+            // Process the result
+            const totalQuestions = localResults.totalQuestions;
+            const correctAnswers = localResults.correctAnswers;
+            const wrongAnswers = localResults.wrongAnswers;
+            const skippedAnswers = totalQuestions - (correctAnswers + wrongAnswers);
+
+            setResults({
+              totalQuestions,
+              correctAnswers,
+              wrongAnswers,
+              score: localResults.score,
+              percentage: localResults.percentage,
+              timeTaken: localResults.timeTaken,
+              isPassed: localResults.isPassed,
+              attemptNumber: 1,
+              correctPercentage: (correctAnswers / totalQuestions) * 100,
+              wrongPercentage: (wrongAnswers / totalQuestions) * 100,
+              skippedPercentage: (skippedAnswers / totalQuestions) * 100
+            });
+          }
+        } else {
+          setAttempts(allResults);
+
+          // Set the latest attempt as current
+          const latestAttempt = Math.max(...allResults.map(r => r.attemptNumber || 1));
+          setCurrentAttempt(latestAttempt);
+
+          const currentResult = allResults.find(r => r.attemptNumber === latestAttempt);
+          if (currentResult) {
+            // Extract data from the answers field
+            const answers = currentResult.answers || {};
+            const totalQuestions = answers.totalQuestions || currentExam?.sections.reduce(
+              (sum, section) => sum + section.questions.length,
+              0
+            ) || 0;
+            const correctAnswers = answers.correctAnswers || 0;
+            const wrongAnswers = answers.wrongAnswers || 0;
+            const skippedAnswers = totalQuestions - (correctAnswers + wrongAnswers);
+
+            setResults({
+              totalQuestions,
+              correctAnswers,
+              wrongAnswers,
+              score: currentResult.obtainedMarks,
+              percentage: answers.percentage || (currentResult.obtainedMarks / currentResult.totalMarks) * 100,
+              timeTaken: answers.timeTaken || 0,
+              isPassed: answers.isPassed || currentResult.status === 'pass',
+              attemptNumber: currentResult.attemptNumber || 1,
+              correctPercentage: (correctAnswers / totalQuestions) * 100,
+              wrongPercentage: (wrongAnswers / totalQuestions) * 100,
+              skippedPercentage: (skippedAnswers / totalQuestions) * 100
+            });
+          }
+        }
+      } catch (error) {
+        console.error('Error loading exam results:', error);
+      } finally {
+        setIsLoading(false);
       }
-    }
-  }, [examId]);
+    };
+
+    loadExamAndResults();
+  }, [examId, user]);
 
   const handleAttemptChange = (attemptNumber: number) => {
     const selectedResult = attempts.find(r => r.attemptNumber === attemptNumber);
     if (selectedResult) {
       setCurrentAttempt(attemptNumber);
-      const totalQuestions = selectedResult.sectionWiseMarks.reduce((acc, s) => acc + s.totalQuestions, 0);
-      const correctAnswers = selectedResult.sectionWiseMarks.reduce((acc, s) => acc + s.correctAnswers, 0);
-      const wrongAnswers = selectedResult.sectionWiseMarks.reduce((acc, s) => acc + s.wrongAnswers, 0);
+
+      // Extract data from the answers field or sectionWiseMarks
+      const answers = selectedResult.answers || {};
+      let totalQuestions = 0;
+      let correctAnswers = 0;
+      let wrongAnswers = 0;
+
+      if (selectedResult.sectionWiseMarks && selectedResult.sectionWiseMarks.length > 0) {
+        // Use sectionWiseMarks if available
+        totalQuestions = selectedResult.sectionWiseMarks.reduce((acc, s) => acc + s.totalQuestions, 0);
+        correctAnswers = selectedResult.sectionWiseMarks.reduce((acc, s) => acc + s.correctAnswers, 0);
+        wrongAnswers = selectedResult.sectionWiseMarks.reduce((acc, s) => acc + s.wrongAnswers, 0);
+      } else {
+        // Use answers field as fallback
+        totalQuestions = answers.totalQuestions || exam?.sections.reduce(
+          (sum, section) => sum + section.questions.length,
+          0
+        ) || 0;
+        correctAnswers = answers.correctAnswers || 0;
+        wrongAnswers = answers.wrongAnswers || 0;
+      }
+
       const skippedAnswers = totalQuestions - (correctAnswers + wrongAnswers);
 
       setResults({
@@ -86,21 +182,41 @@ export function ExamResultPage() {
         correctAnswers,
         wrongAnswers,
         score: selectedResult.obtainedMarks,
-        percentage: (selectedResult.obtainedMarks / selectedResult.totalMarks) * 100,
-        timeTaken: selectedResult.timeTaken,
-        isPassed: selectedResult.status === 'pass',
+        percentage: answers.percentage || (selectedResult.obtainedMarks / selectedResult.totalMarks) * 100,
+        timeTaken: answers.timeTaken || selectedResult.timeTaken || 0,
+        isPassed: answers.isPassed || selectedResult.status === 'pass',
         attemptNumber: selectedResult.attemptNumber,
-        correctPercentage: (correctAnswers / totalQuestions) * 100,
-        wrongPercentage: (wrongAnswers / totalQuestions) * 100,
-        skippedPercentage: (skippedAnswers / totalQuestions) * 100
+        correctPercentage: totalQuestions > 0 ? (correctAnswers / totalQuestions) * 100 : 0,
+        wrongPercentage: totalQuestions > 0 ? (wrongAnswers / totalQuestions) * 100 : 0,
+        skippedPercentage: totalQuestions > 0 ? (skippedAnswers / totalQuestions) * 100 : 0
       });
     }
   };
 
+  if (isLoading) {
+    return (
+      <div className="flex flex-col items-center justify-center min-h-screen">
+        <Loader2 className={`h-12 w-12 animate-spin mb-4 ${isDark ? 'text-white' : 'text-gray-900'}`} />
+        <p className={isDark ? 'text-white' : 'text-gray-900'}>Loading results...</p>
+      </div>
+    );
+  }
+
   if (!exam || !results) {
     return (
-      <div className="flex items-center justify-center min-h-screen">
-        <p className={isDark ? 'text-white' : 'text-gray-900'}>Loading results...</p>
+      <div className="flex flex-col items-center justify-center min-h-screen">
+        <AlertCircle className="h-12 w-12 text-yellow-500 mb-4" />
+        <p className={isDark ? 'text-white' : 'text-gray-900'}>No results found for this exam.</p>
+        <Link
+          to="/exams"
+          className={`mt-6 inline-flex items-center gap-2 px-4 py-2 rounded-lg ${
+            isDark
+              ? 'bg-violet-600 text-white hover:bg-violet-500'
+              : 'bg-violet-600 text-white hover:bg-violet-700'
+          }`}
+        >
+          Back to Tests
+        </Link>
       </div>
     );
   }

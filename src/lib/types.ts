@@ -84,14 +84,17 @@ export interface ExamResult {
   obtainedMarks: number;
   sectionWiseMarks: {
     sectionId: string;
+    sectionName: string;
     totalQuestions: number;
     correctAnswers: number;
     wrongAnswers: number;
-    marks: number;
+    obtainedMarks: number;
+    totalMarks: number;
   }[];
   timeTaken: number;
   status: 'pass' | 'fail';
   submittedAt: string;
+  answers?: Record<string, any>; // Add the answers field
   aiAnalysis?: {
     strengths: string[];
     weaknesses: string[];

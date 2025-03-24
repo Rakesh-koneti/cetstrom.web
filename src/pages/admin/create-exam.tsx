@@ -1,24 +1,22 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
-import { Brain, Beaker, Leaf } from 'lucide-react';
+import { Brain, Beaker, Loader2 } from 'lucide-react';
 import { Button } from '../../components/ui/button';
 import { Exam, Section, DifficultyLevel, Stream } from '../../lib/types';
+import { ExamService, StreamService } from '../../services';
+import { useAuth } from '../../lib/auth-context';
 
-const streamInfo = {
+// Default stream info as fallback
+const defaultStreamInfo = {
   engineering: {
     title: 'Engineering',
     icon: Brain,
-    subjects: ['Mathematics', 'Physics', 'Chemistry', 'Computer Science'],
+    subjects: ['Mathematics', 'Physics', 'Chemistry'],
   },
   pharmacy: {
     title: 'Pharmacy',
     icon: Beaker,
-    subjects: ['Biology', 'Chemistry', 'Pharmacology', 'Pharmaceutical Analysis'],
-  },
-  agriculture: {
-    title: 'Agriculture',
-    icon: Leaf,
-    subjects: ['Agronomy', 'Soil Science', 'Plant Pathology', 'Agricultural Economics'],
+    subjects: ['Biology', 'Physics', 'Chemistry'],
   },
 };
 
@@ -26,13 +24,51 @@ export function CreateExamPage() {
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
   const defaultStream = searchParams.get('stream') as Stream || 'engineering';
+  const { user } = useAuth();
+  const [isLoading, setIsLoading] = useState(false);
+  const [streamInfo, setStreamInfo] = useState(defaultStreamInfo);
+  const [isLoadingStreams, setIsLoadingStreams] = useState(true);
+
+  // Load streams from database
+  useEffect(() => {
+    const loadStreams = async () => {
+      try {
+        setIsLoadingStreams(true);
+        const streams = await StreamService.getStreams();
+
+        if (streams && streams.length > 0) {
+          // Convert to the format expected by the form
+          const streamInfoFromDb: any = {};
+
+          streams.forEach(stream => {
+            let icon = Brain; // Default icon
+            if (stream.icon === 'Beaker') icon = Beaker;
+
+            streamInfoFromDb[stream.id] = {
+              title: stream.title,
+              icon,
+              subjects: stream.subjects.map(subject => subject.name)
+            };
+          });
+
+          setStreamInfo(streamInfoFromDb);
+        }
+      } catch (error) {
+        console.error('Error loading streams:', error);
+      } finally {
+        setIsLoadingStreams(false);
+      }
+    };
+
+    loadStreams();
+  }, []);
 
   const [formData, setFormData] = useState<Omit<Exam, 'id' | 'createdAt'>>({
     title: '',
     stream: defaultStream,
     category: 'daily',
     subject: '',
-    scheduledDate: new Date().toISOString().slice(0, 16),
+    scheduledDate: new Date().toISOString(), // Keep this for compatibility but don't show in UI
     duration: 60,
     totalQuestions: 0,
     sections: [],
@@ -49,35 +85,68 @@ export function CreateExamPage() {
     },
   });
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    setIsLoading(true);
 
     try {
       // Validate required fields
       if (!formData.title || !formData.stream || !formData.subject) {
         alert('Please fill in all required fields');
+        setIsLoading(false);
         return;
       }
 
-      // Create new exam
-      const newExam: Exam = {
-        ...formData,
-        id: Date.now().toString(),
-        createdAt: new Date().toISOString(),
-        totalQuestions: formData.sections.reduce(
-          (total, section) => total + section.questions.length,
-          0
-        ),
-      };
+      // Prepare sections and questions for database
+      const sectionInputs = formData.sections.map(section => ({
+        name: section.name,
+        instructions: section.instructions,
+        subject: section.subject,
+        negativeMarking: section.negativeMarking
+      }));
 
-      // Save to localStorage
+      // Prepare questions by section index
+      const questionInputs: Record<number, any[]> = {};
+      formData.sections.forEach((section, index) => {
+        questionInputs[index] = section.questions.map(question => ({
+          text: question.text,
+          options: question.options,
+          correctAnswer: question.correctAnswer,
+          explanation: question.explanation,
+          subject: question.subject,
+          topic: question.topic,
+          difficulty: question.difficulty,
+          weightage: question.weightage
+        }));
+      });
+
+      // Create exam in database
+      const result = await ExamService.createExam(
+        {
+          title: formData.title,
+          stream: formData.stream,
+          category: formData.category,
+          subject: formData.subject,
+          scheduledDate: new Date().toISOString(), // Use current date
+          duration: formData.duration,
+          difficulty: formData.difficulty,
+          status: 'scheduled',
+          markingScheme: formData.markingScheme,
+          reminderBefore: formData.notifications.reminderBefore,
+          notificationsEnabled: formData.notifications.enabled
+        },
+        sectionInputs,
+        questionInputs
+      );
+
+      if (!result) {
+        throw new Error('Failed to create exam');
+      }
+
+      // Also save to localStorage for offline support
       const storedExams = localStorage.getItem('exams');
       const exams = storedExams ? JSON.parse(storedExams) : [];
-
-      // Add new exam
-      exams.push(newExam);
-
-      // Save back to localStorage
+      exams.push(result);
       localStorage.setItem('exams', JSON.stringify(exams));
 
       // Show success message
@@ -88,6 +157,8 @@ export function CreateExamPage() {
     } catch (error) {
       console.error('Error creating exam:', error);
       alert('Failed to create exam. Please try again.');
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -207,7 +278,7 @@ export function CreateExamPage() {
         {/* Basic Info */}
         <div className="bg-white shadow rounded-lg p-6">
           <h2 className="text-lg font-medium text-gray-900 mb-4">Basic Information</h2>
-          
+
           <div className="grid grid-cols-1 gap-6 sm:grid-cols-2">
             <div>
               <label className="block text-sm font-medium text-gray-700">Title</label>
@@ -265,16 +336,7 @@ export function CreateExamPage() {
               </select>
             </div>
 
-            <div>
-              <label className="block text-sm font-medium text-gray-700">Scheduled Date</label>
-              <input
-                type="datetime-local"
-                required
-                value={formData.scheduledDate}
-                onChange={(e) => setFormData({ ...formData, scheduledDate: e.target.value })}
-                className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 focus:border-violet-500 focus:ring-violet-500"
-              />
-            </div>
+            {/* Scheduled Date field removed */}
 
             <div>
               <label className="block text-sm font-medium text-gray-700">Duration (minutes)</label>
@@ -481,7 +543,16 @@ export function CreateExamPage() {
         </div>
 
         <div className="flex justify-end">
-          <Button type="submit">Create Exam</Button>
+          <Button type="submit" disabled={isLoading}>
+            {isLoading ? (
+              <>
+                <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                Creating...
+              </>
+            ) : (
+              'Create Exam'
+            )}
+          </Button>
         </div>
       </form>
     </div>
