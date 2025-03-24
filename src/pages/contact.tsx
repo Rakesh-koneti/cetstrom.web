@@ -11,23 +11,23 @@ export function ContactPage() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    
+
     // Basic validation
     if (!formData.email.match(/^[^\s@]+@[^\s@]+\.[^\s@]+$/)) {
       alert('Please enter a valid email address');
       return;
     }
-    
+
     if (!formData.name.trim() || !formData.subject.trim() || !formData.message.trim()) {
       alert('Please fill in all fields');
       return;
     }
-    
+
     try {
       // Here you would typically send the form data to your backend
       // For now, we'll just simulate a successful submission
       await new Promise(resolve => setTimeout(resolve, 1000));
-      
+
       // Reset form
       setFormData({ name: '', email: '', subject: '', message: '' });
       alert('Thank you for your message! We will get back to you soon.');
@@ -54,7 +54,7 @@ export function ContactPage() {
             <h2 className="text-2xl font-semibold text-gray-900 dark:text-white mb-6">
               Contact Information
             </h2>
-            
+
             <div className="space-y-6">
               <div className="flex items-start gap-4">
                 <Mail className="h-6 w-6 text-purple-600 dark:text-purple-400 mt-1" />
@@ -62,7 +62,7 @@ export function ContactPage() {
                   <p className="font-medium text-gray-900 dark:text-white">
                     Email
                   </p>
-                  <a 
+                  <a
                     href="mailto:krakesh.gates@gmail.com"
                     className="text-gray-600 dark:text-gray-300 hover:text-purple-600 dark:hover:text-purple-400"
                   >
@@ -71,17 +71,7 @@ export function ContactPage() {
                 </div>
               </div>
 
-              <div className="flex items-start gap-4">
-                <MapPin className="h-6 w-6 text-purple-600 dark:text-purple-400 mt-1" />
-                <div>
-                  <p className="font-medium text-gray-900 dark:text-white">
-                    Location
-                  </p>
-                  <p className="text-gray-600 dark:text-gray-300">
-                    Tadipatri, Andhra Pradesh, India
-                  </p>
-                </div>
-              </div>
+              {/* Location removed */}
             </div>
 
             {/* Developer Credit - Colorful Design */}
@@ -90,12 +80,20 @@ export function ContactPage() {
                 <p className="text-lg font-semibold bg-gradient-to-r from-purple-600 via-pink-500 to-orange-500 bg-clip-text text-transparent animate-pulse">
                   Developed by
                 </p>
-                <p className="text-2xl font-bold mt-2 relative">
-                  <span className="bg-gradient-to-r from-blue-600 via-purple-600 to-pink-600 bg-clip-text text-transparent">
-                    Rakesh Koneti
-                  </span>
-                  <span className="absolute -left-4 -right-4 -bottom-2 h-1 bg-gradient-to-r from-blue-500 via-purple-500 to-pink-500 rounded-full"></span>
-                </p>
+                <div className="space-y-4">
+                  <p className="text-2xl font-bold mt-2 relative">
+                    <span className="bg-gradient-to-r from-blue-600 via-purple-600 to-pink-600 bg-clip-text text-transparent">
+                      Rakesh Koneti
+                    </span>
+                    <span className="absolute -left-4 -right-4 -bottom-2 h-1 bg-gradient-to-r from-blue-500 via-purple-500 to-pink-500 rounded-full"></span>
+                  </p>
+                  <p className="text-2xl font-bold mt-2 relative">
+                    <span className="bg-gradient-to-r from-green-600 via-teal-600 to-cyan-600 bg-clip-text text-transparent">
+                      Venkata Sai Revanth Sannidhi
+                    </span>
+                    <span className="absolute -left-4 -right-4 -bottom-2 h-1 bg-gradient-to-r from-green-500 via-teal-500 to-cyan-500 rounded-full"></span>
+                  </p>
+                </div>
               </div>
             </div>
           </div>
@@ -105,10 +103,10 @@ export function ContactPage() {
             <h2 className="text-2xl font-semibold text-gray-900 dark:text-white mb-6">
               Send us a Message
             </h2>
-            
+
             <form className="space-y-6">
               <div>
-                <label 
+                <label
                   htmlFor="name"
                   className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2"
                 >
@@ -123,7 +121,7 @@ export function ContactPage() {
               </div>
 
               <div>
-                <label 
+                <label
                   htmlFor="email"
                   className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2"
                 >
@@ -138,7 +136,7 @@ export function ContactPage() {
               </div>
 
               <div>
-                <label 
+                <label
                   htmlFor="message"
                   className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2"
                 >

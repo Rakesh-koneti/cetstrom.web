@@ -1,11 +1,10 @@
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { useTheme } from '../lib/theme-context';
 import { PreviousYearPapers } from '../components/PreviousYearPapers';
 import {
   Brain,
   Beaker,
-  X,
   Calculator,
   Atom,
   Microscope,
@@ -40,75 +39,15 @@ const streams = [
 export function ExamsPage() {
   const { theme } = useTheme();
   const isDark = theme === 'dark';
-  const [showLaunchPopup, setShowLaunchPopup] = useState(true);
+  // Launch popup removed
 
-  // Force popup to show on first visit
-  useEffect(() => {
-    const hasSeenPopup = localStorage.getItem('hasSeenLaunchPopup2025');
-    if (!hasSeenPopup) {
-      setShowLaunchPopup(true);
-      // Show popup again after 24 hours
-      const lastShown = localStorage.getItem('lastPopupShown');
-      if (lastShown) {
-        const hoursSinceLastShown = (Date.now() - parseInt(lastShown)) / (1000 * 60 * 60);
-        if (hoursSinceLastShown >= 24) {
-          setShowLaunchPopup(true);
-          localStorage.removeItem('hasSeenLaunchPopup2025');
-        }
-      }
-    } else {
-      setShowLaunchPopup(false);
-    }
-  }, []);
-
-  const handleClosePopup = () => {
-    setShowLaunchPopup(false);
-    localStorage.setItem('hasSeenLaunchPopup2025', 'true');
-    localStorage.setItem('lastPopupShown', Date.now().toString());
-  };
+  // Popup handler removed
 
   return (
     <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-8">
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         <div className="lg:col-span-2">
-          {/* Launch Popup */}
-          {showLaunchPopup && (
-            <div className="fixed inset-0 bg-black/70 flex items-center justify-center z-50 backdrop-blur-sm">
-              <div className={`relative w-full max-w-lg p-8 rounded-xl shadow-2xl transform scale-100 transition-all ${isDark ? 'bg-gray-800' : 'bg-white'}`}>
-                <button
-                  onClick={handleClosePopup}
-                  className={`absolute top-4 right-4 p-2 rounded-full hover:bg-gray-100 ${
-                    isDark ? 'text-gray-400 hover:bg-gray-700' : 'text-gray-500'
-                  }`}
-                >
-                  <X className="w-6 h-6" />
-                </button>
-                <div className="text-center">
-                  <div className="mb-4">
-                    <Brain className="w-16 h-16 mx-auto text-violet-600" />
-                  </div>
-                  <h3 className={`text-2xl font-bold mb-3 ${isDark ? 'text-white' : 'text-gray-900'}`}>
-                    Coming Soon!
-                  </h3>
-                  <p className={`text-lg mb-4 ${isDark ? 'text-gray-300' : 'text-gray-600'}`}>
-                    Our platform will be publicly available on
-                  </p>
-                  <p className={`text-3xl font-bold mb-6 text-violet-600`}>
-                    March 15, 2025
-                  </p>
-                  <div className={`space-y-2 text-sm ${isDark ? 'text-gray-400' : 'text-gray-500'}`}>
-                    <p>Get ready for an enhanced learning experience with:</p>
-                    <ul className="mt-2 space-y-1">
-                      <li>• Comprehensive practice tests</li>
-                      <li>• Subject-specific questions</li>
-                      <li>• Detailed performance analytics</li>
-                      <li>• Personalized learning paths</li>
-                    </ul>
-                  </div>
-                </div>
-              </div>
-            </div>
-          )}
+          {/* Launch Popup removed */}
 
           {/* Header */}
           <div className="sm:flex sm:items-center">
