@@ -1,17 +1,21 @@
-# Cetstrom - Online Exam Platform
+# CETStrom - Online Practice Tests for Engineering & Pharmacy Entrance Exams
 
-A modern, responsive web application for conducting online exams and practice tests. Built with React, TypeScript, and Tailwind CSS.
+A modern, responsive web application for comprehensive practice tests and preparation for engineering and pharmacy entrance exams like AP EAMCET, JEE, and NEET. Built with React, TypeScript, Tailwind CSS, and Supabase.
 
 ## Features
 
-- 🎯 Practice Tests for Engineering and Pharmacy streams
-- 📱 Responsive design for all devices
+- 🎯 Specialized Practice Tests for Engineering and Pharmacy entrance exams
+- 📚 Subject-specific tests for Mathematics, Physics, Chemistry, and Biology
+- � Previous years' question papers with detailed solutions
+- �📱 Responsive design for all devices
 - 🌓 Dark/Light mode support
 - 🔒 Secure admin dashboard
-- 📊 Real-time exam monitoring
+- 📊 Detailed performance analytics and personalized recommendations
 - 🎨 Modern UI with Tailwind CSS
 - 🌐 Multi-language support
-- 📈 Detailed exam analytics
+- � Offline support with local storage
+- 🔄 Synchronization with database when online
+- 🔍 SEO optimized for better discoverability
 
 ## Tech Stack
 
@@ -21,6 +25,8 @@ A modern, responsive web application for conducting online exams and practice te
 - Vite
 - React Router DOM
 - Lucide React Icons
+- Supabase (PostgreSQL Database)
+- Radix UI Components
 
 ## Prerequisites
 
@@ -31,8 +37,8 @@ A modern, responsive web application for conducting online exams and practice te
 
 1. Clone the repository:
 ```bash
-git clone https://github.com/Rakesh-koneti/Cetstroam.git
-cd Cetstroam
+git clone https://github.com/svsairevanth12/cetstrom.in.git
+cd cetstrom.in
 ```
 
 2. Install dependencies:
@@ -55,8 +61,8 @@ npm run build
 Create a `.env` file in the root directory:
 
 ```env
-VITE_API_URL=your_api_url
-VITE_ADMIN_EMAIL=admin@example.com
+VITE_SUPABASE_URL=your_supabase_url
+VITE_SUPABASE_ANON_KEY=your_supabase_anon_key
 ```
 
 ## Project Structure
@@ -64,13 +70,42 @@ VITE_ADMIN_EMAIL=admin@example.com
 ```
 src/
 ├── components/     # Reusable UI components
-├── lib/           # Utilities and contexts
+├── lib/           # Utilities, contexts, and types
+│   ├── auth-context.tsx    # Authentication context
+│   ├── database.types.ts   # Supabase database types
+│   ├── supabase.ts         # Supabase client and utilities
+│   └── ...                 # Other utilities
 ├── pages/         # Page components
 │   ├── admin/     # Admin dashboard pages
+│   ├── exams/     # Exam-related pages
 │   └── ...        # Other pages
-├── styles/        # Global styles
+├── services/      # Data services
+│   ├── exam-service.ts     # Exam data service
+│   ├── result-service.ts   # Result data service
+│   └── stream-service.ts   # Stream data service
 └── main.tsx       # Entry point
 ```
+
+## Recent Updates
+
+### Database Integration
+- Integrated Supabase PostgreSQL database for backend functionality
+- Created tables for exams, sections, questions, results, streams, and subjects
+- Implemented services for data access and management
+- Added offline support with localStorage fallback
+
+### UI Improvements
+- Enhanced the home page with SEO-friendly content
+- Updated the about page with more detailed information
+- Improved the contact page layout and developer information
+- Removed "launching soon" content as the platform is now live
+
+### SEO Optimization
+- Added comprehensive meta tags for better search engine visibility
+- Created sitemap.xml for search engine crawling
+- Updated robots.txt to guide search engine crawlers
+- Added structured data for rich search results
+- Optimized content with relevant keywords for entrance exams
 
 ## Contributing
 
@@ -86,6 +121,8 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 ## Contact
 
-Rakesh Koneti - krakesh.gates@gmail.com
-Location: Tadipatri, Andhra Pradesh, India
-Project Link: [https://github.com/Rakesh-koneti/cetstrom](https://github.com/Rakesh-koneti/cetstrom) 
+Developed by:
+- Rakesh Koneti
+- Venkata Sai Revanth Sannidhi
+
+Project Link: [https://github.com/svsairevanth12/cetstrom.in](https://github.com/svsairevanth12/cetstrom.in)

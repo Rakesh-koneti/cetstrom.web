@@ -56,20 +56,7 @@ export function ContactPage() {
             </h2>
 
             <div className="space-y-6">
-              <div className="flex items-start gap-4">
-                <Mail className="h-6 w-6 text-purple-600 dark:text-purple-400 mt-1" />
-                <div>
-                  <p className="font-medium text-gray-900 dark:text-white">
-                    Email
-                  </p>
-                  <a
-                    href="mailto:krakesh.gates@gmail.com"
-                    className="text-gray-600 dark:text-gray-300 hover:text-purple-600 dark:hover:text-purple-400"
-                  >
-                    krakesh.gates@gmail.com
-                  </a>
-                </div>
-              </div>
+              {/* Email removed */}
 
               {/* Location removed */}
             </div>
@@ -77,22 +64,46 @@ export function ContactPage() {
             {/* Developer Credit - Colorful Design */}
             <div className="mt-8 pt-6 border-t border-gray-200 dark:border-gray-700">
               <div className="flex flex-col items-center justify-center">
-                <p className="text-lg font-semibold bg-gradient-to-r from-purple-600 via-pink-500 to-orange-500 bg-clip-text text-transparent animate-pulse">
-                  Developed by
-                </p>
-                <div className="space-y-4">
-                  <p className="text-2xl font-bold mt-2 relative">
-                    <span className="bg-gradient-to-r from-blue-600 via-purple-600 to-pink-600 bg-clip-text text-transparent">
-                      Rakesh Koneti
-                    </span>
-                    <span className="absolute -left-4 -right-4 -bottom-2 h-1 bg-gradient-to-r from-blue-500 via-purple-500 to-pink-500 rounded-full"></span>
+                <div className="mb-6">
+                  <p className="text-2xl font-bold bg-gradient-to-r from-purple-600 via-pink-500 to-orange-500 bg-clip-text text-transparent animate-pulse">
+                    Developed by
                   </p>
-                  <p className="text-2xl font-bold mt-2 relative">
-                    <span className="bg-gradient-to-r from-green-600 via-teal-600 to-cyan-600 bg-clip-text text-transparent">
-                      Venkata Sai Revanth Sannidhi
-                    </span>
-                    <span className="absolute -left-4 -right-4 -bottom-2 h-1 bg-gradient-to-r from-green-500 via-teal-500 to-cyan-500 rounded-full"></span>
-                  </p>
+                </div>
+                <div className="space-y-6">
+                  <div className="p-5 rounded-xl bg-gradient-to-r from-violet-500 to-purple-600 shadow-lg hover:shadow-violet-500/50 transform hover:scale-105 transition-all duration-300 border-2 border-white/20 cursor-pointer animate-pulse-slow">
+                    <div className="flex items-center justify-center">
+                      <div className="w-10 h-10 rounded-full bg-white/20 flex items-center justify-center mr-3">
+                        <span className="text-xl font-bold text-white">R</span>
+                      </div>
+                      <p className="text-2xl font-bold text-white">
+                        Rakesh Koneti
+                      </p>
+                    </div>
+                  </div>
+                  <div className="p-5 rounded-xl bg-gradient-to-r from-blue-500 to-indigo-600 shadow-lg hover:shadow-blue-500/50 transform hover:scale-105 transition-all duration-300 border-2 border-white/20 cursor-pointer animate-pulse-slow-delayed">
+                    <div className="flex items-center justify-center">
+                      <div className="w-10 h-10 rounded-full bg-white/20 flex items-center justify-center mr-3">
+                        <span className="text-xl font-bold text-white">V</span>
+                      </div>
+                      <p className="text-2xl font-bold text-white">
+                        Venkata Sai Revanth Sannidhi
+                      </p>
+                    </div>
+                  </div>
+                  <style>
+                    {`
+                      @keyframes pulse-slow {
+                        0%, 100% { opacity: 1; }
+                        50% { opacity: 0.8; }
+                      }
+                      .animate-pulse-slow {
+                        animation: pulse-slow 3s ease-in-out infinite;
+                      }
+                      .animate-pulse-slow-delayed {
+                        animation: pulse-slow 3s ease-in-out 1.5s infinite;
+                      }
+                    `}
+                  </style>
                 </div>
               </div>
             </div>

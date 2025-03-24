@@ -43,7 +43,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/Rakesh-koneti/cetstrom.git"
+    "url": "git+https://github.com/svsairevanth12/cetstrom.in.git"
   },
   "keywords": [
     "exam",
@@ -55,7 +55,7 @@
   "author": "Rakesh Koneti <rakeshkoneti123@gmail.com>",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/Rakesh-koneti/Cetstroam/issues"
+    "url": "https://github.com/svsairevanth12/cetstrom.in/issues"
   },
-  "homepage": "https://github.com/Rakesh-koneti/cetstrom#readme"
+  "homepage": "https://github.com/svsairevanth12/cetstrom.in#readme"
 }
