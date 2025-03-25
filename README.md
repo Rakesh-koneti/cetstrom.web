@@ -1,4 +1,4 @@
-# CETStrom - Online Practice Tests for Engineering & Pharmacy Entrance Exams
+# CETStrom - Online Practice Tests for Engineering & Pharmacy Entrance Exams (EAMCET, JEE, NEET)
 
 A modern, responsive web application for comprehensive practice tests and preparation for engineering and pharmacy entrance exams like AP EAMCET, JEE, and NEET. Built with React, TypeScript, Tailwind CSS, and Supabase.
 
@@ -6,8 +6,10 @@ A modern, responsive web application for comprehensive practice tests and prepar
 
 - 🎯 Specialized Practice Tests for Engineering and Pharmacy entrance exams
 - 📚 Subject-specific tests for Mathematics, Physics, Chemistry, and Biology
-- � Previous years' question papers with detailed solutions
-- �📱 Responsive design for all devices
+- 📝 Previous years' question papers with detailed solutions
+- 📱 Responsive design for all devices
+- 📊 Detailed performance analytics and personalized recommendations
+- 🔄 Excel upload feature for bulk question import
 - 🌓 Dark/Light mode support
 - 🔒 Secure admin dashboard
 - 📊 Detailed performance analytics and personalized recommendations
@@ -106,6 +108,12 @@ src/
 - Updated robots.txt to guide search engine crawlers
 - Added structured data for rich search results
 - Optimized content with relevant keywords for entrance exams
+
+### Vercel Deployment
+- Added configuration for Vercel deployment
+- Integrated with GitHub for continuous deployment
+- Set up environment variables for Supabase connection
+- Added Google AdSense integration for monetization
 
 ## Contributing
 
