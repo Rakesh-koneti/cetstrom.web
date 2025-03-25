@@ -1,10 +1,11 @@
 import { useState, useEffect } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
-import { Brain, Beaker, Loader2 } from 'lucide-react';
+import { Brain, Beaker, Loader2, Upload, FileSpreadsheet } from 'lucide-react';
 import { Button } from '../../components/ui/button';
 import { Exam, Section, DifficultyLevel, Stream } from '../../lib/types';
 import { ExamService, StreamService } from '../../services';
 import { useAuth } from '../../lib/auth-context';
+import { ExcelUpload } from '../../components/excel-upload';
 
 // Default stream info as fallback
 const defaultStreamInfo = {
@@ -156,7 +157,9 @@ export function CreateExamPage() {
       navigate(`/admin/manage-tests/${formData.stream}`);
     } catch (error) {
       console.error('Error creating exam:', error);
-      alert('Failed to create exam. Please try again.');
+      // Show a more detailed error message
+      const errorMessage = error.message || 'Failed to create exam. Please try again.';
+      alert(errorMessage);
     } finally {
       setIsLoading(false);
     }
@@ -471,16 +474,37 @@ export function CreateExamPage() {
                 </div>
 
                 <div className="mb-4">
-                  <label className="block text-sm font-medium text-gray-700">
-                    Questions ({section.questions.length})
-                  </label>
-                  <Button
-                    type="button"
-                    onClick={() => addQuestion(sectionIndex)}
-                    className="mt-2"
-                  >
-                    Add Question
-                  </Button>
+                  <div className="flex justify-between items-center">
+                    <label className="block text-sm font-medium text-gray-700">
+                      Questions ({section.questions.length})
+                    </label>
+                    <Button
+                      type="button"
+                      onClick={() => addQuestion(sectionIndex)}
+                      className="mt-2"
+                    >
+                      Add Question
+                    </Button>
+                  </div>
+                </div>
+
+                {/* Excel Upload Component */}
+                <div className="mb-6 border-t pt-4">
+                  <div className="flex items-center gap-2 mb-2">
+                    <FileSpreadsheet className="h-5 w-5 text-violet-600" />
+                    <h4 className="text-md font-medium text-gray-900">Bulk Import Questions</h4>
+                  </div>
+                  <ExcelUpload
+                    onQuestionsImported={(importedQuestions) => {
+                      const newSections = [...formData.sections];
+                      // Add the imported questions to this section
+                      newSections[sectionIndex].questions = [
+                        ...newSections[sectionIndex].questions,
+                        ...importedQuestions
+                      ];
+                      setFormData({ ...formData, sections: newSections });
+                    }}
+                  />
                 </div>
 
                 {section.questions.map((question, questionIndex) => (

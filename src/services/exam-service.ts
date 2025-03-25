@@ -450,6 +450,9 @@ export const ExamService = {
         throw markingError;
       }
 
+      // Initialize total marks for the entire test
+      let testTotalMarks = 0;
+
       // Create sections and questions
       for (let i = 0; i < sections.length; i++) {
         const section = sections[i];
@@ -487,9 +490,12 @@ export const ExamService = {
 
         // Create questions for this section
         const sectionQuestions = questions[i] || [];
-        let totalMarks = 0;
+        let sectionTotalMarks = 0;
 
         for (const question of sectionQuestions) {
+          // Default weightage to 1 if not specified
+          const weightage = question.weightage || 1;
+
           const { error: questionError } = await supabase
             .from('questions')
             .insert({
@@ -500,35 +506,42 @@ export const ExamService = {
               options: JSON.stringify(question.options),
               correct_answer: question.correctAnswer.toString(),
               explanation: question.explanation || '',
-              difficulty: question.difficulty,
+              difficulty: question.difficulty || 'medium',
               topic: question.topic || '',
-              weightage: question.weightage,
-              marks: question.weightage
+              weightage: weightage,
+              marks: weightage
             });
 
           if (questionError) {
             throw questionError;
           }
 
-          totalMarks += question.weightage;
+          sectionTotalMarks += weightage;
         }
 
-        // Update total marks
-        const { error: updateError } = await supabase
-          .from('tests')
-          .update({ total_marks: totalMarks })
-          .eq('id', testId);
+        // Add this section's marks to the test total
+        testTotalMarks += sectionTotalMarks;
+      }
 
-        if (updateError) {
-          throw updateError;
-        }
+      // Update total marks for the entire test
+      // If no questions were added, default to at least 1 mark
+      const finalTotalMarks = testTotalMarks > 0 ? testTotalMarks : 1;
+
+      const { error: updateError } = await supabase
+        .from('tests')
+        .update({ total_marks: finalTotalMarks })
+        .eq('id', testId);
+
+      if (updateError) {
+        throw updateError;
       }
 
       // Get the created exam
       return this.getExamById(testId);
     } catch (error) {
       console.error('Error in createExam:', error);
-      return null;
+      // Throw the error so it can be handled by the UI
+      throw new Error('Failed to create exam: ' + (error.message || 'Unknown error'));
     }
   },
 

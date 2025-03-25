@@ -26,23 +26,23 @@ export function HomePage() {
 
   const features = [
     {
-      name: 'Engineering',
-      description: 'Comprehensive practice tests for engineering entrance exams',
+      name: 'Engineering Entrance Exams',
+      description: 'Comprehensive AP EAMCET, JEE Main & Advanced practice tests with detailed solutions',
       icon: Brain,
     },
     {
-      name: 'Pharmacy',
-      description: 'Specialized tests for pharmacy entrance examinations',
+      name: 'Pharmacy Entrance Tests',
+      description: 'Specialized NEET, GPAT and pharmacy entrance exam preparation with subject-wise questions',
       icon: Beaker,
     },
     {
-      name: 'Expert Content',
-      description: 'Questions designed by subject matter experts',
+      name: 'Expert-Designed Content',
+      description: 'Questions created by top educators and subject matter experts from leading institutions',
       icon: GraduationCap,
     },
     {
-      name: 'Community',
-      description: 'Join thousands of students preparing together',
+      name: 'Performance Analytics',
+      description: 'Detailed score analysis, progress tracking, and personalized improvement recommendations',
       icon: Users,
     },
   ];
@@ -64,13 +64,13 @@ export function HomePage() {
                 🎯 Best Platform for Entrance Exam Preparation
               </div>
               <h1 className="text-5xl md:text-6xl font-bold animate-fade-in">
-                Master Your
+                Best Online Practice Tests for
                 <span className="block mt-2 bg-clip-text text-transparent bg-gradient-to-r from-yellow-300 to-orange-400">
-                  Entrance Exams
+                  Engineering & Pharmacy Entrance Exams
                 </span>
               </h1>
               <p className="text-xl md:text-2xl text-gray-200 animate-fade-in-delay">
-                Comprehensive practice tests and expert guidance for Engineering & Pharmacy entrance exams
+                Comprehensive AP EAMCET, JEE & NEET practice tests with subject-specific questions and detailed performance analytics
               </p>
               <div className="flex flex-wrap gap-4">
                 <Link
@@ -86,7 +86,7 @@ export function HomePage() {
                   Learn More
                 </Link>
               </div>
-              
+
               {/* Quick Stats */}
               <div className="grid grid-cols-2 md:grid-cols-3 gap-4 mt-8 pt-8 border-t border-white/10">
                 <div className="p-4 bg-white/5 backdrop-blur-sm rounded-lg hover:bg-white/10 transition-all duration-300 transform hover:scale-105">
@@ -133,7 +133,7 @@ export function HomePage() {
                 {/* Enhanced Gradient Overlay */}
                 <div className="absolute inset-0 bg-gradient-to-tr from-indigo-700/40 via-purple-700/30 to-transparent"></div>
               </div>
-              
+
               {/* Floating Features */}
               <div className="absolute -right-4 top-10 bg-white/90 dark:bg-gray-800/90 backdrop-blur-sm p-4 rounded-xl shadow-lg transform hover:scale-105 transition-all duration-300 cursor-pointer animate-float">
                 <div className="flex items-center gap-2">
@@ -141,7 +141,7 @@ export function HomePage() {
                   <span className="text-sm font-medium text-gray-800 dark:text-white">Targeted Practice</span>
                 </div>
               </div>
-              
+
               <div className="absolute -left-4 bottom-10 bg-white/90 dark:bg-gray-800/90 backdrop-blur-sm p-4 rounded-xl shadow-lg transform hover:scale-105 transition-all duration-300 cursor-pointer animate-float-delayed">
                 <div className="flex items-center gap-2">
                   <Clock className="h-5 w-5 text-purple-600" />
@@ -163,11 +163,11 @@ export function HomePage() {
           <div className="text-center mb-16">
             <h2 className="text-4xl font-bold">
               <span className={`bg-clip-text text-transparent bg-gradient-to-r ${isDark ? 'from-purple-400 to-pink-400' : 'from-indigo-600 to-purple-600'}`}>
-                Why Choose Us?
+                Top-Rated Online Practice Tests for Entrance Exams
               </span>
             </h2>
             <p className={`mt-4 text-lg ${isDark ? 'text-gray-300' : 'text-gray-600'}`}>
-              Everything you need to succeed in your entrance exams
+              Everything you need to succeed in AP EAMCET, JEE, NEET and other competitive entrance examinations
             </p>
           </div>
 
@@ -193,8 +193,8 @@ export function HomePage() {
       {/* CTA Section */}
       <section className="py-16 bg-gradient-to-r from-indigo-600 via-purple-600 to-pink-600 text-white relative overflow-hidden">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center relative z-10">
-          <h2 className="text-3xl md:text-4xl font-bold mb-6 animate-fade-in">Ready to Excel?</h2>
-          <p className="text-xl mb-8 animate-fade-in-delay">Join thousands of successful students today</p>
+          <h2 className="text-3xl md:text-4xl font-bold mb-6 animate-fade-in">Ready to Ace Your Entrance Exams?</h2>
+          <p className="text-xl mb-8 animate-fade-in-delay">Join thousands of successful students preparing for AP EAMCET, JEE, and NEET with our practice tests</p>
           <div className="mb-8 text-2xl font-bold">
             <span>Next Exam: {currentDateTime.toLocaleDateString()} {currentDateTime.toLocaleTimeString()}</span>
           </div>
@@ -202,7 +202,7 @@ export function HomePage() {
             to="/exams"
             className="inline-block bg-white text-purple-600 px-8 py-4 rounded-full font-semibold hover:bg-opacity-90 transition-all transform hover:scale-105 shadow-lg animate-bounce"
           >
-            Start Your Journey
+            Take Free Practice Test Now
           </Link>
         </div>
         <div className="absolute inset-0 bg-black/10 backdrop-blur-sm"></div>

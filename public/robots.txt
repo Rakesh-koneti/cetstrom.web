@@ -1,0 +1,17 @@
+User-agent: *
+Allow: /
+
+# Allow all crawlers to access all content except admin pages
+Disallow: /admin/
+Disallow: /api/
+
+# Important pages for search engines
+Allow: /exams
+Allow: /exams/engineering
+Allow: /exams/pharmacy
+Allow: /about
+Allow: /contact
+Allow: /previous-papers
+
+# Sitemap location
+Sitemap: https://cetstrom.online/sitemap.xml
