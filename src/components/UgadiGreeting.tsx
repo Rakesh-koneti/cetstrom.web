@@ -7,13 +7,16 @@ export function UgadiGreeting() {
     const [imageError, setImageError] = useState(false);
 
     useEffect(() => {
+        console.log('UgadiGreeting mounted');
         // Check if this is the first visit
         if (!sessionStorage.getItem('ugadiShown')) {
+            console.log('First visit - showing Ugadi greeting');
             // Set a flag to indicate the image has been shown
             sessionStorage.setItem('ugadiShown', 'true');
             
             // Start countdown only after image is loaded
             if (imageLoaded) {
+                console.log('Image loaded, starting countdown');
                 const timer = setInterval(() => {
                     setCountdown(prev => {
                         if (prev <= 1) {
@@ -28,6 +31,7 @@ export function UgadiGreeting() {
                 return () => clearInterval(timer);
             }
         } else {
+            console.log('Not first visit - hiding Ugadi greeting');
             // If already shown, hide immediately
             setShow(false);
         }
@@ -62,10 +66,12 @@ export function UgadiGreeting() {
                 {imageError ? (
                     <div style={{ color: 'red', padding: '20px' }}>
                         Error loading image. Please refresh the page.
+                        <br />
+                        <small>Image path: /images/ugadi-wishes.jpg</small>
                     </div>
                 ) : (
                     <img 
-                        src="/ugadi-wishes.jpg" 
+                        src="/images/ugadi-wishes.jpg" 
                         alt="Happy Ugadi" 
                         style={{
                             maxWidth: '100%',
@@ -75,11 +81,12 @@ export function UgadiGreeting() {
                             borderRadius: '5px'
                         }}
                         onLoad={() => {
-                            console.log('Image loaded successfully');
+                            console.log('Image loaded successfully from:', '/images/ugadi-wishes.jpg');
                             setImageLoaded(true);
                         }}
                         onError={(e) => {
                             console.error('Error loading image:', e);
+                            console.error('Failed image path:', '/images/ugadi-wishes.jpg');
                             setImageError(true);
                         }}
                     />
