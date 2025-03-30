@@ -4,6 +4,7 @@ import { useNavigate } from 'react-router-dom';
 export function UgadiGreeting() {
     const [show, setShow] = useState(true);
     const [imageLoaded, setImageLoaded] = useState(false);
+    const [countdown, setCountdown] = useState(3);
     const navigate = useNavigate();
 
     useEffect(() => {
@@ -14,18 +15,25 @@ export function UgadiGreeting() {
             
             // Start countdown only after image is loaded
             if (imageLoaded) {
-                const timer = setTimeout(() => {
-                    setShow(false);
-                    navigate('/');
-                }, 3000);
+                const timer = setInterval(() => {
+                    setCountdown(prev => {
+                        if (prev <= 1) {
+                            clearInterval(timer);
+                            setShow(false);
+                            window.location.href = '/';
+                            return 0;
+                        }
+                        return prev - 1;
+                    });
+                }, 1000);
 
-                return () => clearTimeout(timer);
+                return () => clearInterval(timer);
             }
         } else {
             // If already shown, redirect immediately
-            navigate('/');
+            window.location.href = '/';
         }
-    }, [navigate, imageLoaded]);
+    }, [imageLoaded]);
 
     if (!show) return null;
 
@@ -65,7 +73,7 @@ export function UgadiGreeting() {
                         borderRadius: '5px',
                         fontFamily: 'Arial, sans-serif'
                     }}>
-                        Redirecting in 3 seconds...
+                        Redirecting in {countdown} seconds...
                     </div>
                 )}
             </div>
