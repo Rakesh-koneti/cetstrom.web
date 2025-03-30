@@ -1,28 +1,9 @@
 import { useEffect, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
 
 export function UgadiGreeting() {
     const [show, setShow] = useState(true);
     const [imageLoaded, setImageLoaded] = useState(false);
     const [countdown, setCountdown] = useState(3);
-    const navigate = useNavigate();
-
-    const redirectToHome = () => {
-        try {
-            // Try React Router navigation first
-            navigate('/', { replace: true });
-            
-            // Fallback to window.location after a short delay
-            setTimeout(() => {
-                if (window.location.pathname !== '/') {
-                    window.location.replace('/');
-                }
-            }, 100);
-        } catch (error) {
-            // If React Router fails, use window.location
-            window.location.replace('/');
-        }
-    };
 
     useEffect(() => {
         // Check if this is the first visit
@@ -37,7 +18,8 @@ export function UgadiGreeting() {
                         if (prev <= 1) {
                             clearInterval(timer);
                             setShow(false);
-                            redirectToHome();
+                            // Force a hard redirect
+                            window.location.href = 'https://cetstrom.in';
                             return 0;
                         }
                         return prev - 1;
@@ -48,9 +30,9 @@ export function UgadiGreeting() {
             }
         } else {
             // If already shown, redirect immediately
-            redirectToHome();
+            window.location.href = 'https://cetstrom.in';
         }
-    }, [imageLoaded, navigate]);
+    }, [imageLoaded]);
 
     if (!show) return null;
 
