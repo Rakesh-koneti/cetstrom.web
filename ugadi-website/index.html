@@ -45,16 +45,16 @@
     <div class="container">
         <img src="/ugadi-wishes.jpg" alt="Happy Ugadi" class="ugadi-image">
     </div>
-    <div id="countdown">Redirecting in 5 seconds...</div>
+    <div id="countdown">Redirecting in 3 seconds...</div>
 
     <script>
         // Check if this is the first visit
-        if (!localStorage.getItem('ugadiShown')) {
+        if (!sessionStorage.getItem('ugadiShown')) {
             // Set a flag to indicate the image has been shown
-            localStorage.setItem('ugadiShown', 'true');
+            sessionStorage.setItem('ugadiShown', 'true');
             
             // Start countdown
-            let seconds = 5;
+            let seconds = 3;
             const countdownElement = document.getElementById('countdown');
             
             const countdown = setInterval(() => {
@@ -64,12 +64,12 @@
                 if (seconds <= 0) {
                     clearInterval(countdown);
                     // Redirect to main website
-                    window.location.href = '/';
+                    window.location.href = 'https://cetstrom.in';
                 }
             }, 1000);
         } else {
             // If already shown, redirect immediately
-            window.location.href = '/';
+            window.location.href = 'https://cetstrom.in';
         }
     </script>
 </body>
