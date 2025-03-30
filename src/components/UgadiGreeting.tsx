@@ -7,6 +7,23 @@ export function UgadiGreeting() {
     const [countdown, setCountdown] = useState(3);
     const navigate = useNavigate();
 
+    const redirectToHome = () => {
+        try {
+            // Try React Router navigation first
+            navigate('/', { replace: true });
+            
+            // Fallback to window.location after a short delay
+            setTimeout(() => {
+                if (window.location.pathname !== '/') {
+                    window.location.replace('/');
+                }
+            }, 100);
+        } catch (error) {
+            // If React Router fails, use window.location
+            window.location.replace('/');
+        }
+    };
+
     useEffect(() => {
         // Check if this is the first visit
         if (!sessionStorage.getItem('ugadiShown')) {
@@ -20,7 +37,7 @@ export function UgadiGreeting() {
                         if (prev <= 1) {
                             clearInterval(timer);
                             setShow(false);
-                            window.location.href = '/';
+                            redirectToHome();
                             return 0;
                         }
                         return prev - 1;
@@ -31,9 +48,9 @@ export function UgadiGreeting() {
             }
         } else {
             // If already shown, redirect immediately
-            window.location.href = '/';
+            redirectToHome();
         }
-    }, [imageLoaded]);
+    }, [imageLoaded, navigate]);
 
     if (!show) return null;
 
