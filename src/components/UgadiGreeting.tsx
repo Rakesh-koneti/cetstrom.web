@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 
 export function UgadiGreeting() {
     const [show, setShow] = useState(true);
+    const [imageLoaded, setImageLoaded] = useState(false);
     const navigate = useNavigate();
 
     useEffect(() => {
@@ -11,18 +12,20 @@ export function UgadiGreeting() {
             // Set a flag to indicate the image has been shown
             sessionStorage.setItem('ugadiShown', 'true');
             
-            // Start countdown
-            const timer = setTimeout(() => {
-                setShow(false);
-                navigate('/');
-            }, 3000);
+            // Start countdown only after image is loaded
+            if (imageLoaded) {
+                const timer = setTimeout(() => {
+                    setShow(false);
+                    navigate('/');
+                }, 3000);
 
-            return () => clearTimeout(timer);
+                return () => clearTimeout(timer);
+            }
         } else {
             // If already shown, redirect immediately
             navigate('/');
         }
-    }, [navigate]);
+    }, [navigate, imageLoaded]);
 
     if (!show) return null;
 
@@ -46,21 +49,25 @@ export function UgadiGreeting() {
                     style={{
                         maxWidth: '100%',
                         height: 'auto',
-                        transition: 'transform 0.3s ease'
+                        transition: 'transform 0.3s ease',
+                        display: imageLoaded ? 'block' : 'none'
                     }}
+                    onLoad={() => setImageLoaded(true)}
                 />
-                <div style={{
-                    position: 'fixed',
-                    bottom: '20px',
-                    right: '20px',
-                    background: 'rgba(0, 0, 0, 0.7)',
-                    color: 'white',
-                    padding: '10px 20px',
-                    borderRadius: '5px',
-                    fontFamily: 'Arial, sans-serif'
-                }}>
-                    Redirecting in 3 seconds...
-                </div>
+                {imageLoaded && (
+                    <div style={{
+                        position: 'fixed',
+                        bottom: '20px',
+                        right: '20px',
+                        background: 'rgba(0, 0, 0, 0.7)',
+                        color: 'white',
+                        padding: '10px 20px',
+                        borderRadius: '5px',
+                        fontFamily: 'Arial, sans-serif'
+                    }}>
+                        Redirecting in 3 seconds...
+                    </div>
+                )}
             </div>
         </div>
     );
