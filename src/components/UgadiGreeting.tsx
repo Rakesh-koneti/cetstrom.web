@@ -4,6 +4,7 @@ export function UgadiGreeting() {
     const [show, setShow] = useState(true);
     const [imageLoaded, setImageLoaded] = useState(false);
     const [countdown, setCountdown] = useState(10);
+    const [imageError, setImageError] = useState(false);
 
     useEffect(() => {
         // Check if this is the first visit
@@ -58,18 +59,31 @@ export function UgadiGreeting() {
                 borderRadius: '10px',
                 boxShadow: '0 4px 20px rgba(0, 0, 0, 0.3)'
             }}>
-                <img 
-                    src="/ugadi-wishes.jpg" 
-                    alt="Happy Ugadi" 
-                    style={{
-                        maxWidth: '100%',
-                        height: 'auto',
-                        transition: 'transform 0.3s ease',
-                        display: imageLoaded ? 'block' : 'none',
-                        borderRadius: '5px'
-                    }}
-                    onLoad={() => setImageLoaded(true)}
-                />
+                {imageError ? (
+                    <div style={{ color: 'red', padding: '20px' }}>
+                        Error loading image. Please refresh the page.
+                    </div>
+                ) : (
+                    <img 
+                        src="/ugadi-wishes.jpg" 
+                        alt="Happy Ugadi" 
+                        style={{
+                            maxWidth: '100%',
+                            height: 'auto',
+                            transition: 'transform 0.3s ease',
+                            display: imageLoaded ? 'block' : 'none',
+                            borderRadius: '5px'
+                        }}
+                        onLoad={() => {
+                            console.log('Image loaded successfully');
+                            setImageLoaded(true);
+                        }}
+                        onError={(e) => {
+                            console.error('Error loading image:', e);
+                            setImageError(true);
+                        }}
+                    />
+                )}
                 {imageLoaded && (
                     <div style={{
                         position: 'absolute',
