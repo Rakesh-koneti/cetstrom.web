@@ -28,11 +28,49 @@
         .ugadi-image:hover {
             transform: scale(1.05);
         }
+
+        #countdown {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background: rgba(0, 0, 0, 0.7);
+            color: white;
+            padding: 10px 20px;
+            border-radius: 5px;
+            font-family: Arial, sans-serif;
+        }
     </style>
 </head>
 <body>
     <div class="container">
-        <img src="ugadi-wishes.jpg.jpg" alt="Happy Ugadi" class="ugadi-image">
+        <img src="/ugadi-wishes.jpg" alt="Happy Ugadi" class="ugadi-image">
     </div>
+    <div id="countdown">Redirecting in 5 seconds...</div>
+
+    <script>
+        // Check if this is the first visit
+        if (!localStorage.getItem('ugadiShown')) {
+            // Set a flag to indicate the image has been shown
+            localStorage.setItem('ugadiShown', 'true');
+            
+            // Start countdown
+            let seconds = 5;
+            const countdownElement = document.getElementById('countdown');
+            
+            const countdown = setInterval(() => {
+                seconds--;
+                countdownElement.textContent = `Redirecting in ${seconds} seconds...`;
+                
+                if (seconds <= 0) {
+                    clearInterval(countdown);
+                    // Redirect to main website
+                    window.location.href = '/';
+                }
+            }, 1000);
+        } else {
+            // If already shown, redirect immediately
+            window.location.href = '/';
+        }
+    </script>
 </body>
 </html> 
