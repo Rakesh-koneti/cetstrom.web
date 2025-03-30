@@ -3,7 +3,7 @@ import { useEffect, useState } from 'react';
 export function UgadiGreeting() {
     const [show, setShow] = useState(true);
     const [imageLoaded, setImageLoaded] = useState(false);
-    const [countdown, setCountdown] = useState(3);
+    const [countdown, setCountdown] = useState(10);
 
     useEffect(() => {
         // Check if this is the first visit
