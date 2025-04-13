@@ -47,6 +47,15 @@ const dummyPapers: Paper[] = [
     downloadUrl: '/papers/engineering/18-may-2024-forenoon.pdf',
     date: '18 May 2024'
   },
+  {
+    id: '8',
+    title: '19 May 2024 Afternoon Paper',
+    year: 2024,
+    subject: 'Engineering Entrance',
+    stream: 'engineering',
+    downloadUrl: '/papers/engineering/19-may-2024-afternoon.pdf',
+    date: '19 May 2024'
+  },
   // Pharmacy papers
   {
     id: '4',
