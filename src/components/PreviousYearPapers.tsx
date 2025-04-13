@@ -56,6 +56,69 @@ const dummyPapers: Paper[] = [
     downloadUrl: '/papers/engineering/19-may-2024-afternoon.pdf',
     date: '19 May 2024'
   },
+  {
+    id: '9',
+    title: '20 May 2024 Forenoon Paper',
+    year: 2024,
+    subject: 'Engineering Entrance',
+    stream: 'engineering',
+    downloadUrl: '/papers/engineering/20-may-2024-forenoon.pdf',
+    date: '20 May 2024'
+  },
+  {
+    id: '10',
+    title: '20 May 2024 Afternoon Paper',
+    year: 2024,
+    subject: 'Engineering Entrance',
+    stream: 'engineering',
+    downloadUrl: '/papers/engineering/20-may-2024-afternoon.pdf',
+    date: '20 May 2024'
+  },
+  {
+    id: '11',
+    title: '21 May 2024 Forenoon Paper',
+    year: 2024,
+    subject: 'Engineering Entrance',
+    stream: 'engineering',
+    downloadUrl: '/papers/engineering/21-may-2024-forenoon.pdf',
+    date: '21 May 2024'
+  },
+  {
+    id: '12',
+    title: '21 May 2024 Afternoon Paper',
+    year: 2024,
+    subject: 'Engineering Entrance',
+    stream: 'engineering',
+    downloadUrl: '/papers/engineering/21-may-2024-afternoon.pdf',
+    date: '21 May 2024'
+  },
+  {
+    id: '13',
+    title: '22 May 2024 Forenoon Paper',
+    year: 2024,
+    subject: 'Engineering Entrance',
+    stream: 'engineering',
+    downloadUrl: '/papers/engineering/22-may-2024-forenoon.pdf',
+    date: '22 May 2024'
+  },
+  {
+    id: '14',
+    title: '22 May 2024 Afternoon Paper',
+    year: 2024,
+    subject: 'Engineering Entrance',
+    stream: 'engineering',
+    downloadUrl: '/papers/engineering/22-may-2024-afternoon.pdf',
+    date: '22 May 2024'
+  },
+  {
+    id: '15',
+    title: '23 May 2024 Forenoon Paper',
+    year: 2024,
+    subject: 'Engineering Entrance',
+    stream: 'engineering',
+    downloadUrl: '/papers/engineering/23-may-2024-forenoon.pdf',
+    date: '23 May 2024'
+  },
   // Pharmacy papers
   {
     id: '4',
