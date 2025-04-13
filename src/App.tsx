@@ -20,7 +20,6 @@ import { ExamsPage } from './pages/exams';
 import { StreamExamsPage } from './pages/exams/stream-exams';
 import { PreviousYearPapersPage } from './pages/previous-year-papers';
 import { PreviousPapersPage } from './pages/previous-papers';
-import { UgadiGreeting } from './components/UgadiGreeting';
 
 function App() {
   useEffect(() => {
@@ -44,7 +43,6 @@ function App() {
       <ThemeProvider>
         <LanguageProvider>
           <AuthProvider>
-            <UgadiGreeting />
             <Routes>
               <Route element={<Layout />}>
                 {/* Public Routes */}
