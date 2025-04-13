@@ -144,6 +144,87 @@ const dummyPapers: Paper[] = [
     stream: 'pharmacy',
     downloadUrl: '#'
   },
+  {
+    id: '16',
+    title: '18 May 2024 Forenoon Paper',
+    year: 2024,
+    subject: 'Pharmacy Entrance',
+    stream: 'pharmacy',
+    downloadUrl: '/papers/pharmacy/18-may-2024-forenoon.pdf',
+    date: '18 May 2024'
+  },
+  {
+    id: '17',
+    title: '19 May 2024 Afternoon Paper',
+    year: 2024,
+    subject: 'Pharmacy Entrance',
+    stream: 'pharmacy',
+    downloadUrl: '/papers/pharmacy/19-may-2024-afternoon.pdf',
+    date: '19 May 2024'
+  },
+  {
+    id: '18',
+    title: '20 May 2024 Forenoon Paper',
+    year: 2024,
+    subject: 'Pharmacy Entrance',
+    stream: 'pharmacy',
+    downloadUrl: '/papers/pharmacy/20-may-2024-forenoon.pdf',
+    date: '20 May 2024'
+  },
+  {
+    id: '19',
+    title: '20 May 2024 Afternoon Paper',
+    year: 2024,
+    subject: 'Pharmacy Entrance',
+    stream: 'pharmacy',
+    downloadUrl: '/papers/pharmacy/20-may-2024-afternoon.pdf',
+    date: '20 May 2024'
+  },
+  {
+    id: '20',
+    title: '21 May 2024 Forenoon Paper',
+    year: 2024,
+    subject: 'Pharmacy Entrance',
+    stream: 'pharmacy',
+    downloadUrl: '/papers/pharmacy/21-may-2024-forenoon.pdf',
+    date: '21 May 2024'
+  },
+  {
+    id: '21',
+    title: '21 May 2024 Afternoon Paper',
+    year: 2024,
+    subject: 'Pharmacy Entrance',
+    stream: 'pharmacy',
+    downloadUrl: '/papers/pharmacy/21-may-2024-afternoon.pdf',
+    date: '21 May 2024'
+  },
+  {
+    id: '22',
+    title: '22 May 2024 Forenoon Paper',
+    year: 2024,
+    subject: 'Pharmacy Entrance',
+    stream: 'pharmacy',
+    downloadUrl: '/papers/pharmacy/22-may-2024-forenoon.pdf',
+    date: '22 May 2024'
+  },
+  {
+    id: '23',
+    title: '22 May 2024 Afternoon Paper',
+    year: 2024,
+    subject: 'Pharmacy Entrance',
+    stream: 'pharmacy',
+    downloadUrl: '/papers/pharmacy/22-may-2024-afternoon.pdf',
+    date: '22 May 2024'
+  },
+  {
+    id: '24',
+    title: '23 May 2024 Forenoon Paper',
+    year: 2024,
+    subject: 'Pharmacy Entrance',
+    stream: 'pharmacy',
+    downloadUrl: '/papers/pharmacy/23-may-2024-forenoon.pdf',
+    date: '23 May 2024'
+  }
 ];
 
 export function PreviousYearPapers() {
