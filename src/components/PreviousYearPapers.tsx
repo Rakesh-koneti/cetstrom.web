@@ -146,39 +146,39 @@ const dummyPapers: Paper[] = [
   },
   {
     id: '16',
-    title: '18 May 2024 Forenoon Paper',
+    title: '16 May 2024 Forenoon Paper',
     year: 2024,
     subject: 'Pharmacy Entrance',
     stream: 'pharmacy',
-    downloadUrl: '/papers/pharmacy/18-may-2024-forenoon.pdf',
-    date: '18 May 2024'
+    downloadUrl: '/papers/pharmacy/16-may-2024-forenoon.pdf',
+    date: '16 May 2024'
   },
   {
     id: '17',
-    title: '19 May 2024 Afternoon Paper',
+    title: '16 May 2024 Afternoon Paper',
     year: 2024,
     subject: 'Pharmacy Entrance',
     stream: 'pharmacy',
-    downloadUrl: '/papers/pharmacy/19-may-2024-afternoon.pdf',
-    date: '19 May 2024'
+    downloadUrl: '/papers/pharmacy/16-may-2024-afternoon.pdf',
+    date: '16 May 2024'
   },
   {
     id: '18',
-    title: '20 May 2024 Forenoon Paper',
+    title: '17 May 2024 Forenoon Paper',
     year: 2024,
     subject: 'Pharmacy Entrance',
     stream: 'pharmacy',
-    downloadUrl: '/papers/pharmacy/20-may-2024-forenoon.pdf',
-    date: '20 May 2024'
+    downloadUrl: '/papers/pharmacy/17-may-2024-forenoon.pdf',
+    date: '17 May 2024'
   },
   {
     id: '19',
-    title: '20 May 2024 Afternoon Paper',
+    title: '17 May 2024 Afternoon Paper',
     year: 2024,
     subject: 'Pharmacy Entrance',
     stream: 'pharmacy',
-    downloadUrl: '/papers/pharmacy/20-may-2024-afternoon.pdf',
-    date: '20 May 2024'
+    downloadUrl: '/papers/pharmacy/17-may-2024-afternoon.pdf',
+    date: '17 May 2024'
   },
   {
     id: '20',
