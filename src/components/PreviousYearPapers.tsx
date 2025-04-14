@@ -179,60 +179,6 @@ const dummyPapers: Paper[] = [
   },
   // Pharmacy papers 2023
   {
-    id: '29',
-    title: '15 May 2023 Forenoon Paper',
-    year: 2023,
-    subject: 'Pharmacy Entrance',
-    stream: 'pharmacy',
-    downloadUrl: '/papers/pharmacy/15-may-2023-forenoon.pdf',
-    date: '15 May 2023'
-  },
-  {
-    id: '30',
-    title: '15 May 2023 Afternoon Paper',
-    year: 2023,
-    subject: 'Pharmacy Entrance',
-    stream: 'pharmacy',
-    downloadUrl: '/papers/pharmacy/15-may-2023-afternoon.pdf',
-    date: '15 May 2023'
-  },
-  {
-    id: '31',
-    title: '16 May 2023 Forenoon Paper',
-    year: 2023,
-    subject: 'Pharmacy Entrance',
-    stream: 'pharmacy',
-    downloadUrl: '/papers/pharmacy/16-may-2023-forenoon.pdf',
-    date: '16 May 2023'
-  },
-  {
-    id: '32',
-    title: '16 May 2023 Afternoon Paper',
-    year: 2023,
-    subject: 'Pharmacy Entrance',
-    stream: 'pharmacy',
-    downloadUrl: '/papers/pharmacy/16-may-2023-afternoon.pdf',
-    date: '16 May 2023'
-  },
-  {
-    id: '33',
-    title: '17 May 2023 Forenoon Paper',
-    year: 2023,
-    subject: 'Pharmacy Entrance',
-    stream: 'pharmacy',
-    downloadUrl: '/papers/pharmacy/17-may-2023-forenoon.pdf',
-    date: '17 May 2023'
-  },
-  {
-    id: '34',
-    title: '17 May 2023 Afternoon Paper',
-    year: 2023,
-    subject: 'Pharmacy Entrance',
-    stream: 'pharmacy',
-    downloadUrl: '/papers/pharmacy/17-may-2023-afternoon.pdf',
-    date: '17 May 2023'
-  },
-  {
     id: '35',
     title: '22 May 2023 Forenoon Paper',
     year: 2023,
