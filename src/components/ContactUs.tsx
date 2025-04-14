@@ -13,13 +13,7 @@ export function ContactUs() {
   });
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [submitStatus, setSubmitStatus] = useState<'idle' | 'success' | 'error'>('idle');
-
-  const handleEmailClick = () => {
-    const subject = 'Contact from CETSTROM.in';
-    const body = 'Hello, I would like to get in touch with you regarding...';
-    const mailtoLink = `mailto:cetstrom.in@gmail.com?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
-    window.location.href = mailtoLink;
-  };
+  const [errorMessage, setErrorMessage] = useState('');
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target;
@@ -30,30 +24,32 @@ export function ContactUs() {
     e.preventDefault();
     setIsSubmitting(true);
     setSubmitStatus('idle');
+    setErrorMessage('');
 
     try {
-      // Create the email content
-      const emailContent = `
-Name: ${formData.name}
-Email: ${formData.email}
-Subject: ${formData.subject}
+      // Send the form data to our API endpoint
+      const response = await fetch('/api/contact', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(formData),
+      });
 
-Message:
-${formData.message}
-      `;
+      const data = await response.json();
 
-      // Create the mailto link with the form data
-      const mailtoLink = `mailto:cetstrom.in@gmail.com?subject=${encodeURIComponent(formData.subject || 'Contact from CETSTROM.in')}&body=${encodeURIComponent(emailContent)}`;
-      
-      // Open the default email client
-      window.location.href = mailtoLink;
-      
-      // Reset form after successful submission
-      setFormData({ name: '', email: '', subject: '', message: '' });
-      setSubmitStatus('success');
+      if (data.success) {
+        // Reset form after successful submission
+        setFormData({ name: '', email: '', subject: '', message: '' });
+        setSubmitStatus('success');
+      } else {
+        setSubmitStatus('error');
+        setErrorMessage(data.error || 'Failed to send message. Please try again.');
+      }
     } catch (error) {
       console.error('Error submitting form:', error);
       setSubmitStatus('error');
+      setErrorMessage('An unexpected error occurred. Please try again later.');
     } finally {
       setIsSubmitting(false);
     }
@@ -87,16 +83,6 @@ ${formData.message}
                   cetstrom.in@gmail.com
                 </a>
               </p>
-              <button
-                onClick={handleEmailClick}
-                className={`mt-6 px-6 py-3 rounded-lg font-medium transition-colors ${
-                  isDark 
-                    ? 'bg-orange-500 hover:bg-orange-600 text-white' 
-                    : 'bg-orange-500 hover:bg-orange-600 text-white'
-                }`}
-              >
-                Quick Email
-              </button>
             </div>
 
             <div className={`border-t ${isDark ? 'border-gray-600' : 'border-gray-200'} pt-8`}>
@@ -209,7 +195,7 @@ ${formData.message}
                   <div className={`mt-4 p-3 rounded-lg text-center ${
                     isDark ? 'bg-green-900/50 text-green-200' : 'bg-green-100 text-green-800'
                   }`}>
-                    Message sent successfully! Your email client should open with the message ready to send.
+                    Message sent successfully! We'll get back to you soon.
                   </div>
                 )}
                 
@@ -217,7 +203,7 @@ ${formData.message}
                   <div className={`mt-4 p-3 rounded-lg text-center ${
                     isDark ? 'bg-red-900/50 text-red-200' : 'bg-red-100 text-red-800'
                   }`}>
-                    There was an error sending your message. Please try again or use the Quick Email button above.
+                    {errorMessage || 'There was an error sending your message. Please try again.'}
                   </div>
                 )}
               </form>
