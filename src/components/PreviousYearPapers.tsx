@@ -13,7 +13,89 @@ interface Paper {
 }
 
 const dummyPapers: Paper[] = [
-  // Engineering papers
+  // Engineering papers 2023
+  {
+    id: '20',
+    title: '15 May 2023 Forenoon Paper',
+    year: 2023,
+    subject: 'Engineering Entrance',
+    stream: 'engineering',
+    downloadUrl: '/papers/engineering/15-may-2023-forenoon.pdf',
+    date: '15 May 2023'
+  },
+  {
+    id: '21',
+    title: '15 May 2023 Afternoon Paper',
+    year: 2023,
+    subject: 'Engineering Entrance',
+    stream: 'engineering',
+    downloadUrl: '/papers/engineering/15-may-2023-afternoon.pdf',
+    date: '15 May 2023'
+  },
+  {
+    id: '22',
+    title: '16 May 2023 Forenoon Paper',
+    year: 2023,
+    subject: 'Engineering Entrance',
+    stream: 'engineering',
+    downloadUrl: '/papers/engineering/16-may-2023-forenoon.pdf',
+    date: '16 May 2023'
+  },
+  {
+    id: '23',
+    title: '16 May 2023 Afternoon Paper',
+    year: 2023,
+    subject: 'Engineering Entrance',
+    stream: 'engineering',
+    downloadUrl: '/papers/engineering/16-may-2023-afternoon.pdf',
+    date: '16 May 2023'
+  },
+  {
+    id: '24',
+    title: '17 May 2023 Forenoon Paper',
+    year: 2023,
+    subject: 'Engineering Entrance',
+    stream: 'engineering',
+    downloadUrl: '/papers/engineering/17-may-2023-forenoon.pdf',
+    date: '17 May 2023'
+  },
+  {
+    id: '25',
+    title: '17 May 2023 Afternoon Paper',
+    year: 2023,
+    subject: 'Engineering Entrance',
+    stream: 'engineering',
+    downloadUrl: '/papers/engineering/17-may-2023-afternoon.pdf',
+    date: '17 May 2023'
+  },
+  {
+    id: '26',
+    title: '18 May 2023 Forenoon Paper',
+    year: 2023,
+    subject: 'Engineering Entrance',
+    stream: 'engineering',
+    downloadUrl: '/papers/engineering/18-may-2023-forenoon.pdf',
+    date: '18 May 2023'
+  },
+  {
+    id: '27',
+    title: '18 May 2023 Afternoon Paper',
+    year: 2023,
+    subject: 'Engineering Entrance',
+    stream: 'engineering',
+    downloadUrl: '/papers/engineering/18-may-2023-afternoon.pdf',
+    date: '18 May 2023'
+  },
+  {
+    id: '28',
+    title: '19 May 2023 Forenoon Paper',
+    year: 2023,
+    subject: 'Engineering Entrance',
+    stream: 'engineering',
+    downloadUrl: '/papers/engineering/19-may-2023-forenoon.pdf',
+    date: '19 May 2023'
+  },
+  // Engineering papers 2024
   {
     id: '7',
     title: '18 May 2024 Forenoon Paper',
@@ -95,7 +177,62 @@ const dummyPapers: Paper[] = [
     downloadUrl: '/papers/engineering/23-may-2024-forenoon.pdf',
     date: '23 May 2024'
   },
-  // Pharmacy papers
+  // Pharmacy papers 2023
+  {
+    id: '29',
+    title: '15 May 2023 Forenoon Paper',
+    year: 2023,
+    subject: 'Pharmacy Entrance',
+    stream: 'pharmacy',
+    downloadUrl: '/papers/pharmacy/15-may-2023-forenoon.pdf',
+    date: '15 May 2023'
+  },
+  {
+    id: '30',
+    title: '15 May 2023 Afternoon Paper',
+    year: 2023,
+    subject: 'Pharmacy Entrance',
+    stream: 'pharmacy',
+    downloadUrl: '/papers/pharmacy/15-may-2023-afternoon.pdf',
+    date: '15 May 2023'
+  },
+  {
+    id: '31',
+    title: '16 May 2023 Forenoon Paper',
+    year: 2023,
+    subject: 'Pharmacy Entrance',
+    stream: 'pharmacy',
+    downloadUrl: '/papers/pharmacy/16-may-2023-forenoon.pdf',
+    date: '16 May 2023'
+  },
+  {
+    id: '32',
+    title: '16 May 2023 Afternoon Paper',
+    year: 2023,
+    subject: 'Pharmacy Entrance',
+    stream: 'pharmacy',
+    downloadUrl: '/papers/pharmacy/16-may-2023-afternoon.pdf',
+    date: '16 May 2023'
+  },
+  {
+    id: '33',
+    title: '17 May 2023 Forenoon Paper',
+    year: 2023,
+    subject: 'Pharmacy Entrance',
+    stream: 'pharmacy',
+    downloadUrl: '/papers/pharmacy/17-may-2023-forenoon.pdf',
+    date: '17 May 2023'
+  },
+  {
+    id: '34',
+    title: '17 May 2023 Afternoon Paper',
+    year: 2023,
+    subject: 'Pharmacy Entrance',
+    stream: 'pharmacy',
+    downloadUrl: '/papers/pharmacy/17-may-2023-afternoon.pdf',
+    date: '17 May 2023'
+  },
+  // Pharmacy papers 2024
   {
     id: '16',
     title: '16 May 2024 Forenoon Paper',
