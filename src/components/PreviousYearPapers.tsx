@@ -441,8 +441,12 @@ export function PreviousYearPapers() {
   const [expandedYear, setExpandedYear] = useState<number | null>(null);
   const [expandedStream, setExpandedStream] = useState<'engineering' | 'pharmacy' | null>(null);
 
-  const years = [...new Set(dummyPapers.map(paper => paper.year))];
+  const years = [...new Set(dummyPapers.map(paper => paper.year))].sort((a, b) => b - a);
   const streams = ['engineering', 'pharmacy'] as const;
+
+  // Debug: Log available years and papers
+  console.log('Available years:', years);
+  console.log('2022 papers:', dummyPapers.filter(paper => paper.year === 2022));
 
   const toggleYear = (year: number) => {
     setExpandedYear(expandedYear === year ? null : year);
@@ -453,7 +457,9 @@ export function PreviousYearPapers() {
   };
 
   const getPapersByStreamAndYear = (stream: 'engineering' | 'pharmacy', year: number) => {
-    return dummyPapers.filter(paper => paper.stream === stream && paper.year === year);
+    const papers = dummyPapers.filter(paper => paper.stream === stream && paper.year === year);
+    console.log(`Papers for ${stream} ${year}:`, papers);
+    return papers;
   };
 
   return (
@@ -483,52 +489,58 @@ export function PreviousYearPapers() {
           
           {expandedStream === stream && (
             <div className="p-4 space-y-4">
-              {years.map(year => (
-                <div key={year} className={`border rounded-lg ${isDark ? 'border-gray-700' : 'border-gray-200'}`}>
-                  <button
-                    onClick={() => toggleYear(year)}
-                    className={`w-full flex items-center justify-between p-4 ${isDark ? 'text-white hover:bg-gray-700' : 'text-gray-900 hover:bg-gray-50'}`}
-                  >
-                    <span className="font-medium">{year}</span>
-                    {expandedYear === year ? (
-                      <ChevronUp className="w-5 h-5" />
-                    ) : (
-                      <ChevronDown className="w-5 h-5" />
-                    )}
-                  </button>
-                  {expandedYear === year && (
-                    <div className={`p-4 border-t ${isDark ? 'border-gray-700' : 'border-gray-200'}`}>
-                      {getPapersByStreamAndYear(stream, year).map(paper => (
-                        <div
-                          key={paper.id}
-                          className={`flex items-center justify-between p-3 rounded-lg mb-2 ${
-                            isDark ? 'hover:bg-gray-700' : 'hover:bg-gray-50'
-                          }`}
-                        >
-                          <div className="flex items-center space-x-3">
-                            <FileText className={`w-5 h-5 ${stream === 'engineering' ? 'text-orange-500' : 'text-amber-500'}`} />
-                            <div>
-                              <p className={`font-medium ${isDark ? 'text-white' : 'text-gray-900'}`}>
-                                {paper.title}
-                              </p>
-                              <p className={`text-sm ${isDark ? 'text-gray-400' : 'text-gray-500'}`}>
-                                {paper.subject} {paper.date && `• ${paper.date}`}
-                              </p>
-                            </div>
-                          </div>
-                          <a
-                            href={paper.downloadUrl}
-                            className={`p-2 rounded-full ${stream === 'engineering' ? 'hover:bg-orange-100 text-orange-500' : 'hover:bg-amber-100 text-amber-500'}`}
-                            title="Download"
+              {years.map(year => {
+                const papersForYear = getPapersByStreamAndYear(stream, year);
+                // Only show years that have papers for this stream
+                if (papersForYear.length === 0) return null;
+                
+                return (
+                  <div key={year} className={`border rounded-lg ${isDark ? 'border-gray-700' : 'border-gray-200'}`}>
+                    <button
+                      onClick={() => toggleYear(year)}
+                      className={`w-full flex items-center justify-between p-4 ${isDark ? 'text-white hover:bg-gray-700' : 'text-gray-900 hover:bg-gray-50'}`}
+                    >
+                      <span className="font-medium">{year}</span>
+                      {expandedYear === year ? (
+                        <ChevronUp className="w-5 h-5" />
+                      ) : (
+                        <ChevronDown className="w-5 h-5" />
+                      )}
+                    </button>
+                    {expandedYear === year && (
+                      <div className={`p-4 border-t ${isDark ? 'border-gray-700' : 'border-gray-200'}`}>
+                        {papersForYear.map(paper => (
+                          <div
+                            key={paper.id}
+                            className={`flex items-center justify-between p-3 rounded-lg mb-2 ${
+                              isDark ? 'hover:bg-gray-700' : 'hover:bg-gray-50'
+                            }`}
                           >
-                            <Download className="w-5 h-5" />
-                          </a>
-                        </div>
-                      ))}
-                    </div>
-                  )}
-                </div>
-              ))}
+                            <div className="flex items-center space-x-3">
+                              <FileText className={`w-5 h-5 ${stream === 'engineering' ? 'text-orange-500' : 'text-amber-500'}`} />
+                              <div>
+                                <p className={`font-medium ${isDark ? 'text-white' : 'text-gray-900'}`}>
+                                  {paper.title}
+                                </p>
+                                <p className={`text-sm ${isDark ? 'text-gray-400' : 'text-gray-500'}`}>
+                                  {paper.subject} {paper.date && `• ${paper.date}`}
+                                </p>
+                              </div>
+                            </div>
+                            <a
+                              href={paper.downloadUrl}
+                              className={`p-2 rounded-full ${stream === 'engineering' ? 'hover:bg-orange-100 text-orange-500' : 'hover:bg-amber-100 text-amber-500'}`}
+                              title="Download"
+                            >
+                              <Download className="w-5 h-5" />
+                            </a>
+                          </div>
+                        ))}
+                      </div>
+                    )}
+                  </div>
+                );
+              })}
             </div>
           )}
         </div>
