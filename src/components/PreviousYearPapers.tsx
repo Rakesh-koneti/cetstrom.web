@@ -232,6 +232,42 @@ const dummyPapers: Paper[] = [
     downloadUrl: '/papers/pharmacy/17-may-2023-afternoon.pdf',
     date: '17 May 2023'
   },
+  {
+    id: '35',
+    title: '22 May 2023 Forenoon Paper',
+    year: 2023,
+    subject: 'Pharmacy Entrance',
+    stream: 'pharmacy',
+    downloadUrl: '/papers/pharmacy/22-may-2023-forenoon.pdf',
+    date: '22 May 2023'
+  },
+  {
+    id: '36',
+    title: '22 May 2023 Afternoon Paper',
+    year: 2023,
+    subject: 'Pharmacy Entrance',
+    stream: 'pharmacy',
+    downloadUrl: '/papers/pharmacy/22-may-2023-afternoon.pdf',
+    date: '22 May 2023'
+  },
+  {
+    id: '37',
+    title: '23 May 2023 Forenoon Paper',
+    year: 2023,
+    subject: 'Pharmacy Entrance',
+    stream: 'pharmacy',
+    downloadUrl: '/papers/pharmacy/23-may-2023-forenoon.pdf',
+    date: '23 May 2023'
+  },
+  {
+    id: '38',
+    title: '23 May 2023 Afternoon Paper',
+    year: 2023,
+    subject: 'Pharmacy Entrance',
+    stream: 'pharmacy',
+    downloadUrl: '/papers/pharmacy/23-may-2023-afternoon.pdf',
+    date: '23 May 2023'
+  },
   // Pharmacy papers 2024
   {
     id: '16',
