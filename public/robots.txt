@@ -14,4 +14,4 @@ Allow: /contact
 Allow: /previous-papers
 
 # Sitemap location
-Sitemap: https://cetstrom.online/sitemap.xml
+Sitemap: https://cetstrom.in/sitemap.xml
