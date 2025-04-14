@@ -593,10 +593,10 @@ export function PreviousYearPapers() {
   return (
     <div className="space-y-8">
       {streams.map(stream => (
-        <div key={stream} className={`rounded-lg shadow-md ${isDark ? 'bg-gray-800' : 'bg-white'}`}>
+        <div key={stream} className={`rounded-lg shadow-md ${isDark ? 'bg-gray-800/95' : 'bg-white'}`}>
           <button
             onClick={() => toggleStream(stream)}
-            className={`w-full flex items-center justify-between p-4 border-b ${isDark ? 'text-white border-gray-700' : 'text-gray-900 border-gray-200'}`}
+            className={`w-full flex items-center justify-between p-4 border-b ${isDark ? 'text-white border-gray-700/80' : 'text-gray-900 border-gray-200'}`}
           >
             <div className="flex items-center space-x-3">
               {stream === 'engineering' ? (
@@ -623,10 +623,10 @@ export function PreviousYearPapers() {
                 if (papersForYear.length === 0) return null;
                 
                 return (
-                  <div key={year} className={`border rounded-lg ${isDark ? 'border-gray-700' : 'border-gray-200'}`}>
+                  <div key={year} className={`border rounded-lg ${isDark ? 'border-gray-700/80 bg-gray-800/90' : 'border-gray-200 bg-white'}`}>
                     <button
                       onClick={() => toggleYear(year)}
-                      className={`w-full flex items-center justify-between p-4 ${isDark ? 'text-white hover:bg-gray-700' : 'text-gray-900 hover:bg-gray-50'}`}
+                      className={`w-full flex items-center justify-between p-4 ${isDark ? 'text-white hover:bg-gray-700/80' : 'text-gray-900 hover:bg-gray-50'}`}
                     >
                       <span className="font-medium">{year}</span>
                       {expandedYear === year ? (
@@ -636,12 +636,12 @@ export function PreviousYearPapers() {
                       )}
                     </button>
                     {expandedYear === year && (
-                      <div className={`p-4 border-t ${isDark ? 'border-gray-700' : 'border-gray-200'}`}>
+                      <div className={`p-4 border-t ${isDark ? 'border-gray-700/80' : 'border-gray-200'}`}>
                         {papersForYear.map(paper => (
                           <div
                             key={paper.id}
                             className={`flex items-center justify-between p-3 rounded-lg mb-2 ${
-                              isDark ? 'hover:bg-gray-700' : 'hover:bg-gray-50'
+                              isDark ? 'hover:bg-gray-700/80' : 'hover:bg-gray-50'
                             }`}
                           >
                             <div className="flex items-center space-x-3">
@@ -650,7 +650,7 @@ export function PreviousYearPapers() {
                                 <p className={`font-medium ${isDark ? 'text-white' : 'text-gray-900'}`}>
                                   {paper.title}
                                 </p>
-                                <p className={`text-sm ${isDark ? 'text-gray-400' : 'text-gray-500'}`}>
+                                <p className={`text-sm ${isDark ? 'text-gray-300' : 'text-gray-500'}`}>
                                   {paper.subject} {paper.date && `• ${paper.date}`}
                                 </p>
                               </div>
