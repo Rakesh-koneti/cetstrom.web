@@ -15,30 +15,6 @@ interface Paper {
 const dummyPapers: Paper[] = [
   // Engineering papers
   {
-    id: '1',
-    title: 'Engineering Mathematics 2024',
-    year: 2024,
-    subject: 'Mathematics',
-    stream: 'engineering',
-    downloadUrl: '#'
-  },
-  {
-    id: '2',
-    title: 'Physics Entrance Exam 2024',
-    year: 2024,
-    subject: 'Physics',
-    stream: 'engineering',
-    downloadUrl: '#'
-  },
-  {
-    id: '3',
-    title: 'Chemistry Final 2023',
-    year: 2023,
-    subject: 'Chemistry',
-    stream: 'engineering',
-    downloadUrl: '#'
-  },
-  {
     id: '7',
     title: '18 May 2024 Forenoon Paper',
     year: 2024,
@@ -120,30 +96,6 @@ const dummyPapers: Paper[] = [
     date: '23 May 2024'
   },
   // Pharmacy papers
-  {
-    id: '4',
-    title: 'Pharmaceutical Chemistry 2024',
-    year: 2024,
-    subject: 'Chemistry',
-    stream: 'pharmacy',
-    downloadUrl: '#'
-  },
-  {
-    id: '5',
-    title: 'Pharmacology 2024',
-    year: 2024,
-    subject: 'Pharmacology',
-    stream: 'pharmacy',
-    downloadUrl: '#'
-  },
-  {
-    id: '6',
-    title: 'Pharmaceutical Analysis 2023',
-    year: 2023,
-    subject: 'Analysis',
-    stream: 'pharmacy',
-    downloadUrl: '#'
-  },
   {
     id: '16',
     title: '16 May 2024 Forenoon Paper',
