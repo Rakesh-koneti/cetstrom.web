@@ -432,6 +432,134 @@ const dummyPapers: Paper[] = [
     stream: 'pharmacy',
     downloadUrl: '/papers/pharmacy/17-may-2024-afternoon.pdf',
     date: '17 May 2024'
+  },
+  // Pharmacy papers 2022
+  {
+    id: '60',
+    title: '11 July 2022 Forenoon Paper',
+    year: 2022,
+    subject: 'Pharmacy Entrance',
+    stream: 'pharmacy',
+    downloadUrl: '/papers/pharmacy/11-july-2022-forenoon.pdf',
+    date: '11 July 2022'
+  },
+  {
+    id: '61',
+    title: '11 July 2022 Afternoon Paper',
+    year: 2022,
+    subject: 'Pharmacy Entrance',
+    stream: 'pharmacy',
+    downloadUrl: '/papers/pharmacy/11-july-2022-afternoon.pdf',
+    date: '11 July 2022'
+  },
+  {
+    id: '62',
+    title: '12 July 2022 Forenoon Paper',
+    year: 2022,
+    subject: 'Pharmacy Entrance',
+    stream: 'pharmacy',
+    downloadUrl: '/papers/pharmacy/12-july-2022-forenoon.pdf',
+    date: '12 July 2022'
+  },
+  {
+    id: '63',
+    title: '12 July 2022 Afternoon Paper',
+    year: 2022,
+    subject: 'Pharmacy Entrance',
+    stream: 'pharmacy',
+    downloadUrl: '/papers/pharmacy/12-july-2022-afternoon.pdf',
+    date: '12 July 2022'
+  },
+  // Pharmacy papers 2021
+  {
+    id: '70',
+    title: '3 September 2021 Forenoon Paper',
+    year: 2021,
+    subject: 'Pharmacy Entrance',
+    stream: 'pharmacy',
+    downloadUrl: '/papers/pharmacy/3-september-2021-forenoon.pdf',
+    date: '3 September 2021'
+  },
+  {
+    id: '71',
+    title: '3 September 2021 Afternoon Paper',
+    year: 2021,
+    subject: 'Pharmacy Entrance',
+    stream: 'pharmacy',
+    downloadUrl: '/papers/pharmacy/3-september-2021-afternoon.pdf',
+    date: '3 September 2021'
+  },
+  {
+    id: '72',
+    title: '6 September 2021 Forenoon Paper',
+    year: 2021,
+    subject: 'Pharmacy Entrance',
+    stream: 'pharmacy',
+    downloadUrl: '/papers/pharmacy/6-september-2021-forenoon.pdf',
+    date: '6 September 2021'
+  },
+  {
+    id: '73',
+    title: '6 September 2021 Afternoon Paper',
+    year: 2021,
+    subject: 'Pharmacy Entrance',
+    stream: 'pharmacy',
+    downloadUrl: '/papers/pharmacy/6-september-2021-afternoon.pdf',
+    date: '6 September 2021'
+  },
+  {
+    id: '74',
+    title: '23 August 2021 Forenoon Paper',
+    year: 2021,
+    subject: 'Pharmacy Entrance',
+    stream: 'pharmacy',
+    downloadUrl: '/papers/pharmacy/23-august-2021-forenoon.pdf',
+    date: '23 August 2021'
+  },
+  {
+    id: '75',
+    title: '23 August 2021 Afternoon Paper',
+    year: 2021,
+    subject: 'Pharmacy Entrance',
+    stream: 'pharmacy',
+    downloadUrl: '/papers/pharmacy/23-august-2021-afternoon.pdf',
+    date: '23 August 2021'
+  },
+  {
+    id: '76',
+    title: '24 August 2021 Forenoon Paper',
+    year: 2021,
+    subject: 'Pharmacy Entrance',
+    stream: 'pharmacy',
+    downloadUrl: '/papers/pharmacy/24-august-2021-forenoon.pdf',
+    date: '24 August 2021'
+  },
+  {
+    id: '77',
+    title: '24 August 2021 Afternoon Paper',
+    year: 2021,
+    subject: 'Pharmacy Entrance',
+    stream: 'pharmacy',
+    downloadUrl: '/papers/pharmacy/24-august-2021-afternoon.pdf',
+    date: '24 August 2021'
+  },
+  {
+    id: '78',
+    title: '25 August 2021 Forenoon Paper',
+    year: 2021,
+    subject: 'Pharmacy Entrance',
+    stream: 'pharmacy',
+    downloadUrl: '/papers/pharmacy/25-august-2021-forenoon.pdf',
+    date: '25 August 2021'
+  },
+  {
+    id: '79',
+    title: '25 August 2021 Afternoon Paper',
+    year: 2021,
+    subject: 'Pharmacy Entrance',
+    stream: 'pharmacy',
+    downloadUrl: '/papers/pharmacy/25-august-2021-afternoon.pdf',
+    date: '25 August 2021'
   }
 ];
 
