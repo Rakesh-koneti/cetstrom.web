@@ -179,51 +179,6 @@ const dummyPapers: Paper[] = [
     stream: 'pharmacy',
     downloadUrl: '/papers/pharmacy/17-may-2024-afternoon.pdf',
     date: '17 May 2024'
-  },
-  {
-    id: '20',
-    title: '21 May 2024 Forenoon Paper',
-    year: 2024,
-    subject: 'Pharmacy Entrance',
-    stream: 'pharmacy',
-    downloadUrl: '/papers/pharmacy/21-may-2024-forenoon.pdf',
-    date: '21 May 2024'
-  },
-  {
-    id: '21',
-    title: '21 May 2024 Afternoon Paper',
-    year: 2024,
-    subject: 'Pharmacy Entrance',
-    stream: 'pharmacy',
-    downloadUrl: '/papers/pharmacy/21-may-2024-afternoon.pdf',
-    date: '21 May 2024'
-  },
-  {
-    id: '22',
-    title: '22 May 2024 Forenoon Paper',
-    year: 2024,
-    subject: 'Pharmacy Entrance',
-    stream: 'pharmacy',
-    downloadUrl: '/papers/pharmacy/22-may-2024-forenoon.pdf',
-    date: '22 May 2024'
-  },
-  {
-    id: '23',
-    title: '22 May 2024 Afternoon Paper',
-    year: 2024,
-    subject: 'Pharmacy Entrance',
-    stream: 'pharmacy',
-    downloadUrl: '/papers/pharmacy/22-may-2024-afternoon.pdf',
-    date: '22 May 2024'
-  },
-  {
-    id: '24',
-    title: '23 May 2024 Forenoon Paper',
-    year: 2024,
-    subject: 'Pharmacy Entrance',
-    stream: 'pharmacy',
-    downloadUrl: '/papers/pharmacy/23-may-2024-forenoon.pdf',
-    date: '23 May 2024'
   }
 ];
 
