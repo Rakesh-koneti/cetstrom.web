@@ -13,6 +13,88 @@ interface Paper {
 }
 
 const dummyPapers: Paper[] = [
+  // Engineering papers 2024
+  {
+    id: '7',
+    title: '18 May 2024 Forenoon Paper',
+    year: 2024,
+    subject: 'Engineering Entrance',
+    stream: 'engineering',
+    downloadUrl: '/papers/engineering/18-may-2024-forenoon.pdf',
+    date: '18 May 2024'
+  },
+  {
+    id: '8',
+    title: '19 May 2024 Afternoon Paper',
+    year: 2024,
+    subject: 'Engineering Entrance',
+    stream: 'engineering',
+    downloadUrl: '/papers/engineering/19-may-2024-afternoon.pdf',
+    date: '19 May 2024'
+  },
+  {
+    id: '9',
+    title: '20 May 2024 Forenoon Paper',
+    year: 2024,
+    subject: 'Engineering Entrance',
+    stream: 'engineering',
+    downloadUrl: '/papers/engineering/20-may-2024-forenoon.pdf',
+    date: '20 May 2024'
+  },
+  {
+    id: '10',
+    title: '20 May 2024 Afternoon Paper',
+    year: 2024,
+    subject: 'Engineering Entrance',
+    stream: 'engineering',
+    downloadUrl: '/papers/engineering/20-may-2024-afternoon.pdf',
+    date: '20 May 2024'
+  },
+  {
+    id: '11',
+    title: '21 May 2024 Forenoon Paper',
+    year: 2024,
+    subject: 'Engineering Entrance',
+    stream: 'engineering',
+    downloadUrl: '/papers/engineering/21-may-2024-forenoon.pdf',
+    date: '21 May 2024'
+  },
+  {
+    id: '12',
+    title: '21 May 2024 Afternoon Paper',
+    year: 2024,
+    subject: 'Engineering Entrance',
+    stream: 'engineering',
+    downloadUrl: '/papers/engineering/21-may-2024-afternoon.pdf',
+    date: '21 May 2024'
+  },
+  {
+    id: '13',
+    title: '22 May 2024 Forenoon Paper',
+    year: 2024,
+    subject: 'Engineering Entrance',
+    stream: 'engineering',
+    downloadUrl: '/papers/engineering/22-may-2024-forenoon.pdf',
+    date: '22 May 2024'
+  },
+  {
+    id: '14',
+    title: '22 May 2024 Afternoon Paper',
+    year: 2024,
+    subject: 'Engineering Entrance',
+    stream: 'engineering',
+    downloadUrl: '/papers/engineering/22-may-2024-afternoon.pdf',
+    date: '22 May 2024'
+  },
+  {
+    id: '15',
+    title: '23 May 2024 Forenoon Paper',
+    year: 2024,
+    subject: 'Engineering Entrance',
+    stream: 'engineering',
+    downloadUrl: '/papers/engineering/23-may-2024-forenoon.pdf',
+    date: '23 May 2024'
+  },
   // Engineering papers 2023
   {
     id: '20',
@@ -95,87 +177,187 @@ const dummyPapers: Paper[] = [
     downloadUrl: '/papers/engineering/19-may-2023-forenoon.pdf',
     date: '19 May 2023'
   },
-  // Engineering papers 2024
+  // Engineering papers 2022
   {
-    id: '7',
-    title: '18 May 2024 Forenoon Paper',
-    year: 2024,
+    id: '40',
+    title: '4 July 2022 Forenoon Paper',
+    year: 2022,
     subject: 'Engineering Entrance',
     stream: 'engineering',
-    downloadUrl: '/papers/engineering/18-may-2024-forenoon.pdf',
-    date: '18 May 2024'
+    downloadUrl: '/papers/engineering/4-july-2022-forenoon.pdf',
+    date: '4 July 2022'
   },
   {
-    id: '8',
-    title: '19 May 2024 Afternoon Paper',
-    year: 2024,
+    id: '41',
+    title: '4 July 2022 Afternoon Paper',
+    year: 2022,
     subject: 'Engineering Entrance',
     stream: 'engineering',
-    downloadUrl: '/papers/engineering/19-may-2024-afternoon.pdf',
-    date: '19 May 2024'
+    downloadUrl: '/papers/engineering/4-july-2022-afternoon.pdf',
+    date: '4 July 2022'
   },
   {
-    id: '9',
-    title: '20 May 2024 Forenoon Paper',
-    year: 2024,
+    id: '42',
+    title: '5 July 2022 Forenoon Paper',
+    year: 2022,
     subject: 'Engineering Entrance',
     stream: 'engineering',
-    downloadUrl: '/papers/engineering/20-may-2024-forenoon.pdf',
-    date: '20 May 2024'
+    downloadUrl: '/papers/engineering/5-july-2022-forenoon.pdf',
+    date: '5 July 2022'
   },
   {
-    id: '10',
-    title: '20 May 2024 Afternoon Paper',
-    year: 2024,
+    id: '43',
+    title: '5 July 2022 Afternoon Paper',
+    year: 2022,
     subject: 'Engineering Entrance',
     stream: 'engineering',
-    downloadUrl: '/papers/engineering/20-may-2024-afternoon.pdf',
-    date: '20 May 2024'
+    downloadUrl: '/papers/engineering/5-july-2022-afternoon.pdf',
+    date: '5 July 2022'
   },
   {
-    id: '11',
-    title: '21 May 2024 Forenoon Paper',
-    year: 2024,
+    id: '44',
+    title: '6 July 2022 Forenoon Paper',
+    year: 2022,
     subject: 'Engineering Entrance',
     stream: 'engineering',
-    downloadUrl: '/papers/engineering/21-may-2024-forenoon.pdf',
-    date: '21 May 2024'
+    downloadUrl: '/papers/engineering/6-july-2022-forenoon.pdf',
+    date: '6 July 2022'
   },
   {
-    id: '12',
-    title: '21 May 2024 Afternoon Paper',
-    year: 2024,
+    id: '45',
+    title: '6 July 2022 Afternoon Paper',
+    year: 2022,
     subject: 'Engineering Entrance',
     stream: 'engineering',
-    downloadUrl: '/papers/engineering/21-may-2024-afternoon.pdf',
-    date: '21 May 2024'
+    downloadUrl: '/papers/engineering/6-july-2022-afternoon.pdf',
+    date: '6 July 2022'
   },
   {
-    id: '13',
-    title: '22 May 2024 Forenoon Paper',
-    year: 2024,
+    id: '46',
+    title: '7 July 2022 Forenoon Paper',
+    year: 2022,
     subject: 'Engineering Entrance',
     stream: 'engineering',
-    downloadUrl: '/papers/engineering/22-may-2024-forenoon.pdf',
-    date: '22 May 2024'
+    downloadUrl: '/papers/engineering/7-july-2022-forenoon.pdf',
+    date: '7 July 2022'
   },
   {
-    id: '14',
-    title: '22 May 2024 Afternoon Paper',
-    year: 2024,
+    id: '47',
+    title: '7 July 2022 Afternoon Paper',
+    year: 2022,
     subject: 'Engineering Entrance',
     stream: 'engineering',
-    downloadUrl: '/papers/engineering/22-may-2024-afternoon.pdf',
-    date: '22 May 2024'
+    downloadUrl: '/papers/engineering/7-july-2022-afternoon.pdf',
+    date: '7 July 2022'
   },
   {
-    id: '15',
-    title: '23 May 2024 Forenoon Paper',
-    year: 2024,
+    id: '48',
+    title: '8 July 2022 Forenoon Paper',
+    year: 2022,
     subject: 'Engineering Entrance',
     stream: 'engineering',
-    downloadUrl: '/papers/engineering/23-may-2024-forenoon.pdf',
-    date: '23 May 2024'
+    downloadUrl: '/papers/engineering/8-july-2022-forenoon.pdf',
+    date: '8 July 2022'
+  },
+  {
+    id: '49',
+    title: '8 July 2022 Afternoon Paper',
+    year: 2022,
+    subject: 'Engineering Entrance',
+    stream: 'engineering',
+    downloadUrl: '/papers/engineering/8-july-2022-afternoon.pdf',
+    date: '8 July 2022'
+  },
+  // Engineering papers 2021
+  {
+    id: '50',
+    title: '19 August 2021 Forenoon Paper',
+    year: 2021,
+    subject: 'Engineering Entrance',
+    stream: 'engineering',
+    downloadUrl: '/papers/engineering/19-august-2021-forenoon.pdf',
+    date: '19 August 2021'
+  },
+  {
+    id: '51',
+    title: '19 August 2021 Afternoon Paper',
+    year: 2021,
+    subject: 'Engineering Entrance',
+    stream: 'engineering',
+    downloadUrl: '/papers/engineering/19-august-2021-afternoon.pdf',
+    date: '19 August 2021'
+  },
+  {
+    id: '52',
+    title: '20 August 2021 Forenoon Paper',
+    year: 2021,
+    subject: 'Engineering Entrance',
+    stream: 'engineering',
+    downloadUrl: '/papers/engineering/20-august-2021-forenoon.pdf',
+    date: '20 August 2021'
+  },
+  {
+    id: '53',
+    title: '20 August 2021 Afternoon Paper',
+    year: 2021,
+    subject: 'Engineering Entrance',
+    stream: 'engineering',
+    downloadUrl: '/papers/engineering/20-august-2021-afternoon.pdf',
+    date: '20 August 2021'
+  },
+  {
+    id: '54',
+    title: '23 August 2021 Forenoon Paper',
+    year: 2021,
+    subject: 'Engineering Entrance',
+    stream: 'engineering',
+    downloadUrl: '/papers/engineering/23-august-2021-forenoon.pdf',
+    date: '23 August 2021'
+  },
+  {
+    id: '55',
+    title: '23 August 2021 Afternoon Paper',
+    year: 2021,
+    subject: 'Engineering Entrance',
+    stream: 'engineering',
+    downloadUrl: '/papers/engineering/23-august-2021-afternoon.pdf',
+    date: '23 August 2021'
+  },
+  {
+    id: '56',
+    title: '24 August 2021 Forenoon Paper',
+    year: 2021,
+    subject: 'Engineering Entrance',
+    stream: 'engineering',
+    downloadUrl: '/papers/engineering/24-august-2021-forenoon.pdf',
+    date: '24 August 2021'
+  },
+  {
+    id: '57',
+    title: '24 August 2021 Afternoon Paper',
+    year: 2021,
+    subject: 'Engineering Entrance',
+    stream: 'engineering',
+    downloadUrl: '/papers/engineering/24-august-2021-afternoon.pdf',
+    date: '24 August 2021'
+  },
+  {
+    id: '58',
+    title: '25 August 2021 Forenoon Paper',
+    year: 2021,
+    subject: 'Engineering Entrance',
+    stream: 'engineering',
+    downloadUrl: '/papers/engineering/25-august-2021-forenoon.pdf',
+    date: '25 August 2021'
+  },
+  {
+    id: '59',
+    title: '25 August 2021 Afternoon Paper',
+    year: 2021,
+    subject: 'Engineering Entrance',
+    stream: 'engineering',
+    downloadUrl: '/papers/engineering/25-august-2021-afternoon.pdf',
+    date: '25 August 2021'
   },
   // Pharmacy papers 2023
   {
