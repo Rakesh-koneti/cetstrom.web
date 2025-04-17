@@ -1,117 +1,100 @@
-import { Link } from 'react-router-dom';
-import { useTheme } from '../lib/theme-context';
-import { Menu, Moon, Sun, GraduationCap } from 'lucide-react';
 import { useState } from 'react';
+import { Link } from 'react-router-dom';
+import { Menu, X, Moon, Sun } from 'lucide-react';
+import { Button } from './ui/button';
+import { useTheme } from '../lib/theme-context';
 
 export function Navbar() {
-  const { theme, toggleTheme } = useTheme();
-  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const [isOpen, setIsOpen] = useState(false);
+  const { theme, setTheme } = useTheme();
+  const isDark = theme === 'dark';
+
+  const toggleMenu = () => setIsOpen(!isOpen);
+  const closeMenu = () => setIsOpen(false);
+
+  const toggleTheme = () => {
+    setTheme(isDark ? 'light' : 'dark');
+  };
+
+  const navItems = [
+    { href: '/', label: 'Home' },
+    { href: '/mock-tests', label: 'Mock Tests' },
+    { href: '/previous-year-papers', label: 'Previous Papers' },
+    { href: '/about', label: 'About' },
+    { href: '/contact', label: 'Contact' },
+  ];
 
   return (
-    <nav className="fixed top-0 left-0 right-0 z-50">
-      <div className="glass-effect border-b border-gray-200/20 dark:border-gray-700/20">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex items-center justify-between h-20">
-            {/* Logo and Brand */}
-            <div className="flex items-center">
-              <Link to="/" className="flex items-center space-x-3 group">
-                <GraduationCap className="h-9 w-9 text-purple-600 group-hover:scale-110 transition-transform duration-300" />
-                <span className="text-2xl font-bold gradient-text">
-                  Cetstrom
-                </span>
-              </Link>
-            </div>
+    <nav className="sticky top-0 z-50 bg-white dark:bg-gray-900 border-b border-gray-200 dark:border-gray-800 transition-colors duration-200">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="flex justify-between h-16">
+          <div className="flex items-center">
+            <Link to="/" className="flex-shrink-0 flex items-center" onClick={closeMenu}>
+              <span className="text-xl font-bold bg-gradient-to-r from-purple-600 to-pink-600 text-transparent bg-clip-text">
+                CETStrom
+              </span>
+            </Link>
+          </div>
 
-            {/* Desktop Navigation */}
-            <div className="hidden md:flex items-center space-x-1">
-              <Link to="/" className="nav-link">
-                Home
-              </Link>
-              <Link to="/exams" className="nav-link">
-                Practice Tests
-              </Link>
-              <Link to="/mock-tests" className="nav-link">
-                Mock Tests
-              </Link>
-              <Link to="/previous-year-papers" className="nav-link">
-                Previous Year Papers
-              </Link>
-              <Link to="/about" className="nav-link">
-                About
-              </Link>
-              <Link to="/contact" className="nav-link">
-                Contact
-              </Link>
-
-              {/* Theme Toggle */}
-              <button
-                onClick={toggleTheme}
-                className="ml-4 p-2 rounded-full hover:bg-gray-100/50 dark:hover:bg-gray-800/50 transition-colors"
-                aria-label="Toggle theme"
+          {/* Desktop Navigation */}
+          <div className="hidden md:flex md:items-center md:space-x-4">
+            {navItems.map((item) => (
+              <Link
+                key={item.href}
+                to={item.href}
+                className="px-3 py-2 rounded-md text-sm font-medium text-gray-700 dark:text-gray-200 hover:text-purple-600 dark:hover:text-purple-400 transition-colors"
               >
-                {theme === 'dark' ? (
-                  <Sun className="h-5 w-5 text-yellow-500" />
-                ) : (
-                  <Moon className="h-5 w-5 text-gray-600" />
-                )}
-              </button>
-            </div>
+                {item.label}
+              </Link>
+            ))}
+            <Button
+              variant="ghost"
+              size="icon"
+              onClick={toggleTheme}
+              className="ml-2 rounded-full"
+            >
+              {isDark ? <Sun className="h-5 w-5" /> : <Moon className="h-5 w-5" />}
+            </Button>
+          </div>
 
-            {/* Mobile Menu Button */}
-            <div className="md:hidden">
-              <button
-                onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-                className="p-2 rounded-lg hover:bg-gray-100/50 dark:hover:bg-gray-800/50 transition-colors"
-                aria-label="Toggle mobile menu"
-              >
-                <Menu className="h-6 w-6 text-gray-600 dark:text-gray-300" />
-              </button>
-            </div>
+          {/* Mobile menu button */}
+          <div className="flex items-center md:hidden">
+            <Button
+              variant="ghost"
+              size="icon"
+              onClick={toggleTheme}
+              className="mr-2 rounded-full"
+            >
+              {isDark ? <Sun className="h-5 w-5" /> : <Moon className="h-5 w-5" />}
+            </Button>
+            <button
+              onClick={toggleMenu}
+              className="inline-flex items-center justify-center p-2 rounded-md text-gray-700 dark:text-gray-200 hover:text-purple-600 dark:hover:text-purple-400 focus:outline-none"
+            >
+              {isOpen ? (
+                <X className="block h-6 w-6" />
+              ) : (
+                <Menu className="block h-6 w-6" />
+              )}
+            </button>
           </div>
         </div>
+      </div>
 
-        {/* Mobile Navigation */}
-        {isMobileMenuOpen && (
-          <div className="md:hidden glass-effect border-t border-gray-200/20 dark:border-gray-700/20">
-            <div className="px-4 pt-2 pb-3 space-y-1">
-              <Link
-                to="/"
-                className="mobile-nav-link"
-                onClick={() => setIsMobileMenuOpen(false)}
-              >
-                Home
-              </Link>
-              <Link
-                to="/exams"
-                className="mobile-nav-link"
-                onClick={() => setIsMobileMenuOpen(false)}
-              >
-                Practice Tests
-              </Link>
-              <Link
-                to="/previous-year-papers"
-                className="mobile-nav-link"
-                onClick={() => setIsMobileMenuOpen(false)}
-              >
-                Previous Year Papers
-              </Link>
-              <Link
-                to="/about"
-                className="mobile-nav-link"
-                onClick={() => setIsMobileMenuOpen(false)}
-              >
-                About
-              </Link>
-              <Link
-                to="/contact"
-                className="mobile-nav-link"
-                onClick={() => setIsMobileMenuOpen(false)}
-              >
-                Contact
-              </Link>
-            </div>
-          </div>
-        )}
+      {/* Mobile menu */}
+      <div className={`${isOpen ? 'block' : 'hidden'} md:hidden bg-white dark:bg-gray-900 transition-colors duration-200`}>
+        <div className="px-2 pt-2 pb-3 space-y-1">
+          {navItems.map((item) => (
+            <Link
+              key={item.href}
+              to={item.href}
+              className="block px-3 py-2 rounded-md text-base font-medium text-gray-700 dark:text-gray-200 hover:text-purple-600 dark:hover:text-purple-400 transition-colors"
+              onClick={closeMenu}
+            >
+              {item.label}
+            </Link>
+          ))}
+        </div>
       </div>
     </nav>
   );
