@@ -1,3 +1,11 @@
+export type Json =
+  | string
+  | number
+  | boolean
+  | null
+  | { [key: string]: Json | undefined }
+  | Json[]
+
 export interface Database {
   public: {
     Tables: {
@@ -324,6 +332,41 @@ export interface Database {
           action?: string
           ip_address?: string | null
           user_agent?: string | null
+          created_at?: string
+        }
+      }
+      mock_tests: {
+        Row: {
+          id: string
+          title: string
+          description: string
+          duration: number
+          questions_count: number
+          difficulty: 'Easy' | 'Medium' | 'Hard'
+          subject: string
+          stream: 'Engineering' | 'Pharmacy'
+          created_at: string
+        }
+        Insert: {
+          id?: string
+          title: string
+          description: string
+          duration: number
+          questions_count: number
+          difficulty: 'Easy' | 'Medium' | 'Hard'
+          subject: string
+          stream: 'Engineering' | 'Pharmacy'
+          created_at?: string
+        }
+        Update: {
+          id?: string
+          title?: string
+          description?: string
+          duration?: number
+          questions_count?: number
+          difficulty?: 'Easy' | 'Medium' | 'Hard'
+          subject?: string
+          stream?: 'Engineering' | 'Pharmacy'
           created_at?: string
         }
       }

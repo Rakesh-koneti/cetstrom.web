@@ -30,6 +30,9 @@ export function Navbar() {
               <Link to="/exams" className="nav-link">
                 Practice Tests
               </Link>
+              <Link to="/mock-tests" className="nav-link">
+                Mock Tests
+              </Link>
               <Link to="/previous-year-papers" className="nav-link">
                 Previous Year Papers
               </Link>
