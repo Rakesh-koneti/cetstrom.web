@@ -15,20 +15,32 @@ function App() {
         window.location.pathname.slice(0, -1) + window.location.search
       );
     }
+
+    // Check system preference for dark mode on load
+    const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+    const savedTheme = localStorage.getItem('darkMode');
+    
+    if (savedTheme === null && prefersDark) {
+      document.documentElement.classList.add('dark');
+    } else if (savedTheme === 'true') {
+      document.documentElement.classList.add('dark');
+    }
   }, []);
 
   return (
     <BrowserRouter>
       <div className="min-h-screen bg-white dark:bg-gray-900">
         <Navbar />
-        <Routes>
-          <Route path="" element={<HomePage />} />
-          <Route path="mock-tests" element={<MockTestsPage />} />
-          <Route path="exam/:testId" element={<MockTestsPage />} />
-          <Route path="contact" element={<ContactUs />} />
-          {/* Redirect any unmatched routes to home */}
-          <Route path="*" element={<Navigate to="" replace />} />
-        </Routes>
+        <main className="min-h-screen">
+          <Routes>
+            <Route path="" element={<HomePage />} />
+            <Route path="mock-tests" element={<MockTestsPage />} />
+            <Route path="exam/:testId" element={<MockTestsPage />} />
+            <Route path="contact" element={<ContactUs />} />
+            {/* Redirect any unmatched routes to home */}
+            <Route path="*" element={<Navigate to="" replace />} />
+          </Routes>
+        </main>
       </div>
     </BrowserRouter>
   );
