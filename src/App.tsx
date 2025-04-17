@@ -24,10 +24,19 @@ import { MockTestsPage } from './pages/mock-tests';
 
 function App() {
   useEffect(() => {
+    // Remove trailing slashes from URLs
+    if (window.location.pathname.length > 1 && window.location.pathname.endsWith('/')) {
+      window.history.replaceState(
+        null, 
+        '', 
+        window.location.pathname.slice(0, -1) + window.location.search
+      );
+    }
+
     // Register service worker for PWA
     if ('serviceWorker' in navigator) {
       window.addEventListener('load', () => {
-        navigator.serviceWorker.register('/service-worker.js').catch((error) => {
+        navigator.serviceWorker.register('service-worker.js').catch((error) => {
           console.error('Service worker registration failed:', error);
         });
       });
@@ -40,7 +49,7 @@ function App() {
   }, []);
 
   return (
-    <Router>
+    <Router basename="">
       <ThemeProvider>
         <LanguageProvider>
           <AuthProvider>
@@ -48,27 +57,27 @@ function App() {
               <Route element={<Layout />}>
                 {/* Public Routes */}
                 <Route index element={<HomePage />} />
-                <Route path="/about" element={<AboutPage />} />
-                <Route path="/contact" element={<ContactPage />} />
-                <Route path="/exams" element={<ExamsPage />} />
-                <Route path="/mock-tests" element={<MockTestsPage />} />
-                <Route path="/previous-year-papers" element={<PreviousYearPapersPage />} />
-                <Route path="/exams/:stream" element={<StreamExamsPage />} />
-                <Route path="/exam/:examId" element={<ExamPage />} />
-                <Route path="/exam/:examId/result" element={<ExamResultPage />} />
-                <Route path="/exam/:examId/review" element={<ExamReviewPage />} />
-                <Route path="/admin/login" element={<AdminLoginPage />} />
-                <Route path="/previous-papers" element={<PreviousPapersPage />} />
+                <Route path="about" element={<AboutPage />} />
+                <Route path="contact" element={<ContactPage />} />
+                <Route path="exams" element={<ExamsPage />} />
+                <Route path="mock-tests" element={<MockTestsPage />} />
+                <Route path="previous-year-papers" element={<PreviousYearPapersPage />} />
+                <Route path="exams/:stream" element={<StreamExamsPage />} />
+                <Route path="exam/:examId" element={<ExamPage />} />
+                <Route path="exam/:examId/result" element={<ExamResultPage />} />
+                <Route path="exam/:examId/review" element={<ExamReviewPage />} />
+                <Route path="admin/login" element={<AdminLoginPage />} />
+                <Route path="previous-papers" element={<PreviousPapersPage />} />
 
                 {/* Protected Admin Routes */}
-                <Route path="/admin" element={<ProtectedRoute><AdminDashboardPage /></ProtectedRoute>} />
-                <Route path="/admin/create-exam" element={<ProtectedRoute><CreateExamPage /></ProtectedRoute>} />
-                <Route path="/admin/edit-exam/:id" element={<ProtectedRoute><EditExamPage /></ProtectedRoute>} />
-                <Route path="/admin/manage-tests" element={<ProtectedRoute><ManageTestsPage /></ProtectedRoute>} />
-                <Route path="/admin/manage-tests/:category" element={<ProtectedRoute><ManageTestsPage /></ProtectedRoute>} />
+                <Route path="admin" element={<ProtectedRoute><AdminDashboardPage /></ProtectedRoute>} />
+                <Route path="admin/create-exam" element={<ProtectedRoute><CreateExamPage /></ProtectedRoute>} />
+                <Route path="admin/edit-exam/:id" element={<ProtectedRoute><EditExamPage /></ProtectedRoute>} />
+                <Route path="admin/manage-tests" element={<ProtectedRoute><ManageTestsPage /></ProtectedRoute>} />
+                <Route path="admin/manage-tests/:category" element={<ProtectedRoute><ManageTestsPage /></ProtectedRoute>} />
 
                 {/* Catch all unknown routes */}
-                <Route path="*" element={<Navigate to="/" replace />} />
+                <Route path="*" element={<Navigate to="" replace />} />
               </Route>
             </Routes>
           </AuthProvider>
