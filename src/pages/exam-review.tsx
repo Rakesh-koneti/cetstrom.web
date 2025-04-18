@@ -13,6 +13,11 @@ import {
   Loader2,
   AlertCircle
 } from 'lucide-react';
+import { supabase } from '../lib/supabase';
+
+interface ExamAnswers {
+  [key: string]: string | number | boolean;
+}
 
 export function ExamReviewPage() {
   const { examId } = useParams();
@@ -20,7 +25,7 @@ export function ExamReviewPage() {
   const { user } = useAuth();
   const isDark = theme === 'dark';
   const [exam, setExam] = useState<Exam | null>(null);
-  const [answers, setAnswers] = useState<Record<string, number>>({});
+  const [answers, setAnswers] = useState<ExamAnswers>({});
   const [currentSection, setCurrentSection] = useState(0);
   const [currentQuestion, setCurrentQuestion] = useState(0);
   const [isLoading, setIsLoading] = useState(true);
@@ -52,32 +57,41 @@ export function ExamReviewPage() {
           // Try to load from localStorage as fallback
           const localResults = JSON.parse(localStorage.getItem(`examResult_${examId}`) || 'null');
 
-          if (localResults?.answers) {
-            setAnswers(localResults.answers);
+          if (localResults) {
+            // Extract answers from localStorage format
+            const userAnswers = localResults.answers || {};
+            setAnswers(userAnswers);
           } else {
-            // No results found
             setError('No results found for this exam');
           }
         } else {
           // Get the latest result
           const latestResult = results[results.length - 1];
 
-          // Extract answers from the result
           if (latestResult.answers) {
-            // Handle different formats of answers
+            // Extract user answers from the result
+            let userAnswers;
+            
             if (latestResult.answers.userAnswers) {
-              setAnswers(latestResult.answers.userAnswers);
-            } else if (typeof latestResult.answers === 'object' && Object.keys(latestResult.answers).length > 0) {
-              // Try to find the userAnswers in the answers object
-              const possibleUserAnswers = latestResult.answers.userAnswers ||
-                                         latestResult.answers.answers ||
-                                         latestResult.answers;
+              // New format where answers are nested under userAnswers
+              userAnswers = latestResult.answers.userAnswers;
+            } else if (typeof latestResult.answers === 'object') {
+              // Old format or direct answers object
+              const possibleAnswers = Object.entries(latestResult.answers)
+                .filter(([key, value]) => 
+                  // Filter out metadata fields
+                  !['totalQuestions', 'correctAnswers', 'wrongAnswers', 'timeTaken', 'percentage', 'isPassed'].includes(key)
+                )
+                .reduce((acc, [key, value]) => {
+                  acc[key] = value;
+                  return acc;
+                }, {});
+              
+              userAnswers = possibleAnswers;
+            }
 
-              if (possibleUserAnswers && typeof possibleUserAnswers === 'object') {
-                setAnswers(possibleUserAnswers);
-              } else {
-                setError('No valid answers found for this exam');
-              }
+            if (userAnswers && Object.keys(userAnswers).length > 0) {
+              setAnswers(userAnswers);
             } else {
               setError('No valid answers found for this exam');
             }
@@ -91,16 +105,11 @@ export function ExamReviewPage() {
 
         // Try to load from localStorage as fallback
         try {
-          const exams = JSON.parse(localStorage.getItem('exams') || '[]');
-          const currentExam = exams.find((e: Exam) => e.id === examId);
-          if (currentExam) {
-            setExam(currentExam);
-
-            const localResults = JSON.parse(localStorage.getItem(`examResult_${examId}`) || 'null');
-            if (localResults?.answers) {
-              setAnswers(localResults.answers);
-              setError(null); // Clear error if we found data in localStorage
-            }
+          const localResults = JSON.parse(localStorage.getItem(`examResult_${examId}`) || 'null');
+          if (localResults) {
+            const userAnswers = localResults.answers || {};
+            setAnswers(userAnswers);
+            setError(null); // Clear error if we found data in localStorage
           }
         } catch (localErr) {
           console.error('Error loading from localStorage:', localErr);
@@ -112,6 +121,48 @@ export function ExamReviewPage() {
 
     loadExamAndAnswers();
   }, [examId, user]);
+
+  const loadAnswers = async (examId: string) => {
+    try {
+      // Try to load answers from localStorage first
+      const storedAnswers = localStorage.getItem(`exam_${examId}_answers`);
+      if (storedAnswers) {
+        const parsedAnswers: ExamAnswers = JSON.parse(storedAnswers);
+        // Filter out metadata fields and ensure we only have valid answers
+        const validAnswers = Object.entries(parsedAnswers).reduce((acc: { [key: string]: string | number | boolean }, [key, value]) => {
+          if (!['examId', 'userId', 'startTime', 'endTime'].includes(key)) {
+            acc[key] = value;
+          }
+          return acc;
+        }, {} as { [key: string]: string | number | boolean });
+        setAnswers(validAnswers);
+        return;
+      }
+
+      // If no answers in localStorage, try loading from database
+      const { data: examResults, error } = await supabase
+        .from('exam_results')
+        .select('answers')
+        .eq('exam_id', examId)
+        .single();
+
+      if (error) {
+        console.error('Error loading answers:', error);
+        setError('Failed to load answers');
+        return;
+      }
+
+      if (examResults?.answers) {
+        const dbAnswers: ExamAnswers = examResults.answers;
+        setAnswers(dbAnswers);
+      } else {
+        setError('No answers found for this exam');
+      }
+    } catch (err) {
+      console.error('Error in loadAnswers:', err);
+      setError('Failed to load answers');
+    }
+  };
 
   if (isLoading) {
     return (

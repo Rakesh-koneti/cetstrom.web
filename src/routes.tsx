@@ -8,6 +8,7 @@ import { ExamsPage } from './pages/exams';
 import { StreamExamsPage } from './pages/exams/stream-exams';
 import { ExamPage } from './pages/exam';
 import { ExamResultPage } from './pages/exam-result';
+import { ExamReviewPage } from './pages/exam-review';
 
 export function AppRoutes() {
   return (
@@ -21,6 +22,7 @@ export function AppRoutes() {
       <Route path="/exams/:stream" element={<StreamExamsPage />} />
       <Route path="/exam/:examId" element={<ExamPage />} />
       <Route path="/exam/:examId/result" element={<ExamResultPage />} />
+      <Route path="/exam/:examId/review" element={<ExamReviewPage />} />
       <Route path="*" element={<Navigate to="/" replace />} />
     </Routes>
   );
