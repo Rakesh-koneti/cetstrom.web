@@ -47,6 +47,28 @@ const practiceTests = {
               topic: 'Calculus',
               difficulty: 'medium',
               weightage: 4
+            },
+            {
+              id: 'math-q3',
+              text: 'What is the value of sin²θ + cos²θ?',
+              options: ['0', '1', '2', 'Depends on θ'],
+              correctAnswer: 1,
+              explanation: 'This is a fundamental trigonometric identity: sin²θ + cos²θ = 1',
+              subject: 'mathematics',
+              topic: 'Trigonometry',
+              difficulty: 'easy',
+              weightage: 4
+            },
+            {
+              id: 'math-q4',
+              text: 'Solve the equation: log₂(x) = 3',
+              options: ['6', '8', '9', '16'],
+              correctAnswer: 1,
+              explanation: 'If log₂(x) = 3, then x = 2³ = 8',
+              subject: 'mathematics',
+              topic: 'Logarithms',
+              difficulty: 'medium',
+              weightage: 4
             }
           ]
         }
@@ -98,6 +120,28 @@ const practiceTests = {
               topic: 'Organic Chemistry',
               difficulty: 'medium',
               weightage: 4
+            },
+            {
+              id: 'chem-q3',
+              text: 'Which of the following is an aromatic compound?',
+              options: ['Benzene', 'Cyclohexane', 'Hexane', 'Ethene'],
+              correctAnswer: 0,
+              explanation: 'Benzene is an aromatic compound due to its cyclic structure with delocalized electrons.',
+              subject: 'chemistry',
+              topic: 'Organic Chemistry',
+              difficulty: 'medium',
+              weightage: 4
+            },
+            {
+              id: 'chem-q4',
+              text: 'What is the pH of a neutral solution at 25°C?',
+              options: ['0', '7', '14', '1'],
+              correctAnswer: 1,
+              explanation: 'At 25°C, a neutral solution has a pH of 7.',
+              subject: 'chemistry',
+              topic: 'Acids and Bases',
+              difficulty: 'easy',
+              weightage: 4
             }
           ]
         }
@@ -145,6 +189,87 @@ export interface QuestionCreateInput {
   topic?: string;
   difficulty: DifficultyLevel;
   weightage: number;
+}
+
+interface DatabaseTest {
+  id: string;
+  title: string;
+  description: string;
+  stream: string;
+  subject: string;
+  difficulty: string;
+  duration: number;
+  total_marks: number;
+  status: string;
+  category: string;
+  scheduled_date: string;
+  created_at: string;
+  updated_at: string;
+  is_previous_year: boolean;
+  year?: number;
+  reminder_before?: number;
+  notifications_enabled?: boolean;
+  marking_schemes: Array<{
+    default_weightage: number;
+    default_negative_marking: number;
+    passing_percentage: number;
+  }>;
+}
+
+interface DatabaseSection {
+  id: string;
+  name: string;
+  instructions: string;
+  subject: string;
+  negative_marking: number;
+}
+
+interface DatabaseQuestion {
+  id: string;
+  question_text: string;
+  options: string | string[];
+  correct_answer: string;
+  explanation?: string;
+  question_type: string;
+  difficulty: string;
+  topic?: string;
+  weightage?: number;
+  marks?: number;
+}
+
+interface PracticeTest {
+  id: string;
+  title: string;
+  stream: Stream;
+  category: 'daily' | 'weekly' | 'monthly';
+  subject: string;
+  scheduledDate: string;
+  duration: number;
+  difficulty: DifficultyLevel;
+  status: 'active';
+  sections: Array<{
+    id: string;
+    name: string;
+    instructions: string;
+    subject: string;
+    negativeMarking: number;
+    questions: Array<{
+      id: string;
+      text: string;
+      options: string[];
+      correctAnswer: number;
+      explanation?: string;
+      subject: string;
+      topic?: string;
+      difficulty: DifficultyLevel;
+      weightage: number;
+    }>;
+  }>;
+  markingScheme: {
+    defaultWeightage: number;
+    defaultNegativeMarking: number;
+    passingPercentage: number;
+  };
 }
 
 /**
@@ -206,133 +331,203 @@ export const ExamService = {
         throw error;
       }
 
-      // Transform the data to match our Exam type
-      const exams: Exam[] = await Promise.all(
-        (data || []).map(async (test) => {
-          // Get sections for this exam
-          const { data: sectionData, error: sectionError } = await supabase
-            .from('test_sections')
-            .select(`
-              section_id,
-              section_order,
-              sections (
-                id,
-                name,
-                instructions,
-                subject,
-                negative_marking
-              )
-            `)
-            .eq('test_id', test.id)
-            .order('section_order');
+      // Transform practice test to match Exam type
+      const transformPracticeTest = (test: PracticeTest): Exam => ({
+        id: test.id,
+        title: test.title,
+        stream: test.stream,
+        category: test.category,
+        subject: test.subject,
+        scheduledDate: test.scheduledDate,
+        duration: test.duration,
+        totalQuestions: test.sections.reduce(
+          (sum, section) => sum + section.questions.length,
+          0
+        ),
+        sections: test.sections.map(section => ({
+          id: section.id,
+          name: section.name,
+          instructions: section.instructions,
+          subject: section.subject,
+          negativeMarking: section.negativeMarking,
+          questions: section.questions.map(q => ({
+            ...q,
+            explanation: q.explanation || '',
+            topic: q.topic || '',
+            section: section.id
+          }))
+        })),
+        difficulty: test.difficulty,
+        status: 'scheduled',
+        createdAt: new Date().toISOString(),
+        notifications: {
+          reminderBefore: 60,
+          enabled: true
+        },
+        markingScheme: test.markingScheme
+      });
 
-          if (sectionError) {
-            console.error('Error fetching sections:', sectionError);
+      // Transform database test to Exam type
+      const transformDatabaseTest = (test: DatabaseTest): Exam => {
+        const markingScheme = test.marking_schemes?.[0];
+        return {
+          id: test.id,
+          title: test.title,
+          stream: test.stream as Stream,
+          category: test.category as 'daily' | 'weekly' | 'monthly',
+          subject: test.subject,
+          scheduledDate: test.scheduled_date,
+          duration: test.duration,
+          totalQuestions: 0, // Will be updated after sections are processed
+          sections: [], // Will be updated after sections are processed
+          difficulty: test.difficulty as DifficultyLevel,
+          status: test.status as 'scheduled' | 'completed',
+          createdAt: test.created_at,
+          notifications: {
+            reminderBefore: test.reminder_before || 60,
+            enabled: test.notifications_enabled || true
+          },
+          markingScheme: {
+            defaultWeightage: markingScheme?.default_weightage || 1,
+            defaultNegativeMarking: markingScheme?.default_negative_marking || 0,
+            passingPercentage: markingScheme?.passing_percentage || 35
+          }
+        };
+      };
+
+      // Transform database section to Section type
+      const transformDatabaseSection = (section: DatabaseSection, questions: Question[]): Section => ({
+        id: section.id,
+        name: section.name,
+        instructions: section.instructions || '',
+        subject: section.subject,
+        negativeMarking: section.negative_marking,
+        questions
+      });
+
+      // Transform database question to Question type
+      const transformDatabaseQuestion = (q: DatabaseQuestion, subject: string, sectionId: string): Question => {
+        let parsedOptions: string[] = [];
+        try {
+          parsedOptions = typeof q.options === 'string' ? JSON.parse(q.options) : 
+                        Array.isArray(q.options) ? q.options : [];
+        } catch (e) {
+          console.error('Error parsing options:', e);
+          parsedOptions = [];
+        }
+        
+        return {
+          id: q.id,
+          text: q.question_text,
+          options: parsedOptions,
+          correctAnswer: parseInt(q.correct_answer, 10) || 0,
+          explanation: q.explanation || '',
+          subject: subject,
+          topic: q.topic || '',
+          difficulty: q.difficulty as DifficultyLevel,
+          weightage: q.weightage || q.marks || 1,
+          section: sectionId
+        };
+      };
+
+      // Transform the data to match our Exam type
+      const exams: (Exam | null)[] = await Promise.all(
+        (data || []).map(async (test: DatabaseTest) => {
+          try {
+            const exam = transformDatabaseTest(test);
+
+            // Get sections for this exam
+            const { data: sectionData, error: sectionError } = await supabase
+              .from('test_sections')
+              .select(`
+                section_id,
+                section_order,
+                sections (
+                  id,
+                  name,
+                  instructions,
+                  subject,
+                  negative_marking
+                )
+              `)
+              .eq('test_id', test.id)
+              .order('section_order') as { data: Array<{ sections: DatabaseSection }> | null, error: any };
+
+            if (sectionError) {
+              console.error('Error fetching sections:', sectionError);
+              return null;
+            }
+
+            // Get questions for each section
+            const sections = await Promise.all(
+              (sectionData || []).map(async (sectionJoin) => {
+                const section = sectionJoin.sections;
+                if (!section) return null;
+
+                try {
+                  const { data: questionData, error: questionError } = await supabase
+                    .from('questions')
+                    .select(`
+                      id,
+                      question_text,
+                      options,
+                      correct_answer,
+                      explanation,
+                      question_type,
+                      difficulty,
+                      topic,
+                      weightage,
+                      marks
+                    `)
+                    .eq('section_id', section.id) as { data: DatabaseQuestion[] | null, error: any };
+
+                  if (questionError) {
+                    console.error('Error fetching questions for section:', section.id, questionError);
+                    return null;
+                  }
+
+                  const questions = (questionData || []).map(q => 
+                    transformDatabaseQuestion(q, test.subject, section.id)
+                  );
+
+                  return transformDatabaseSection(section, questions);
+                } catch (error) {
+                  console.error('Error processing section:', section.id, error);
+                  return null;
+                }
+              })
+            );
+
+            // Filter out any null sections
+            const validSections = sections.filter((section): section is Section => section !== null);
+
+            // Update exam with sections and total questions
+            exam.sections = validSections;
+            exam.totalQuestions = validSections.reduce(
+              (sum, section) => sum + section.questions.length,
+              0
+            );
+
+            return exam;
+          } catch (error) {
+            console.error('Error processing exam:', test.id, error);
             return null;
           }
-
-          // Get questions for each section
-          const sections: Section[] = await Promise.all(
-            (sectionData || []).map(async (sectionJoin) => {
-              const section = sectionJoin.sections;
-
-              const { data: questionData, error: questionError } = await supabase
-                .from('questions')
-                .select(`
-                  id,
-                  question_text,
-                  options,
-                  correct_answer,
-                  explanation,
-                  question_type,
-                  difficulty,
-                  topic,
-                  weightage,
-                  marks
-                `)
-                .eq('section_id', section.id);
-
-              if (questionError) {
-                console.error('Error fetching questions:', questionError);
-                return null;
-              }
-
-              // Transform questions to match our Question type
-              const questions: Question[] = (questionData || []).map((q) => ({
-                id: q.id,
-                text: q.question_text,
-                options: Array.isArray(q.options) ? q.options : [],
-                correctAnswer: parseInt(q.correct_answer, 10) || 0,
-                explanation: q.explanation,
-                subject: test.subject,
-                topic: q.topic,
-                difficulty: q.difficulty as DifficultyLevel,
-                weightage: q.weightage || q.marks || 1,
-                section: section.id
-              }));
-
-              return {
-                id: section.id,
-                name: section.name,
-                instructions: section.instructions,
-                subject: section.subject,
-                negativeMarking: section.negative_marking || 0,
-                questions
-              };
-            })
-          );
-
-          // Filter out any null sections (from errors)
-          const validSections = sections.filter(Boolean) as Section[];
-
-          // Calculate total questions
-          const totalQuestions = validSections.reduce(
-            (sum, section) => sum + section.questions.length,
-            0
-          );
-
-          const markingScheme = test.marking_schemes?.[0] || {
-            default_weightage: 1,
-            default_negative_marking: 0,
-            passing_percentage: 35
-          };
-
-          return {
-            id: test.id,
-            title: test.title,
-            stream: test.stream as Stream,
-            category: test.category as 'daily' | 'weekly' | 'monthly',
-            subject: test.subject,
-            scheduledDate: test.scheduled_date,
-            duration: test.duration,
-            totalQuestions,
-            sections: validSections,
-            difficulty: test.difficulty as DifficultyLevel,
-            status: test.status as 'scheduled' | 'completed',
-            createdAt: test.created_at,
-            notifications: {
-              reminderBefore: test.reminder_before || 60,
-              enabled: test.notifications_enabled || true
-            },
-            markingScheme: {
-              defaultWeightage: markingScheme.default_weightage,
-              defaultNegativeMarking: markingScheme.default_negative_marking,
-              passingPercentage: markingScheme.passing_percentage
-            }
-          };
         })
       );
 
-      // Filter out any null exams (from errors)
-      const filteredExams = exams.filter(Boolean) as Exam[];
+      // Filter out any null exams
+      const filteredExams = exams.filter((exam): exam is Exam => exam !== null);
 
       // Add practice tests based on the stream filter
       let practiceExams: Exam[] = [];
       if (filters?.stream) {
-        practiceExams = practiceTests[filters.stream] || [];
+        practiceExams = (practiceTests[filters.stream] as PracticeTest[] || []).map(transformPracticeTest);
       } else {
         // If no stream filter, include all practice tests
-        practiceExams = [...practiceTests.engineering, ...practiceTests.pharmacy];
+        practiceExams = [...practiceTests.engineering, ...practiceTests.pharmacy].map(test => 
+          transformPracticeTest(test as PracticeTest)
+        );
       }
 
       // Apply subject and difficulty filters to practice tests if needed
@@ -402,6 +597,8 @@ export const ExamService = {
           updated_at,
           is_previous_year,
           year,
+          reminder_before,
+          notifications_enabled,
           marking_schemes (
             default_weightage,
             default_negative_marking,
@@ -409,7 +606,7 @@ export const ExamService = {
           )
         `)
         .eq('id', id)
-        .single();
+        .single() as { data: DatabaseTest | null, error: any };
 
       if (testError) {
         console.error('Error fetching test data:', testError);
@@ -438,7 +635,7 @@ export const ExamService = {
           )
         `)
         .eq('test_id', id)
-        .order('section_order');
+        .order('section_order') as { data: Array<{ sections: DatabaseSection }> | null, error: any };
 
       if (sectionError) {
         console.error('Error fetching sections:', sectionError);
@@ -485,7 +682,7 @@ export const ExamService = {
                 weightage,
                 marks
               `)
-              .eq('section_id', section.id);
+              .eq('section_id', section.id) as { data: DatabaseQuestion[] | null, error: any };
 
             if (questionError) {
               console.error('Error fetching questions for section:', section.id, questionError);
@@ -493,18 +690,29 @@ export const ExamService = {
             }
 
             // Transform questions
-            const questions = (questionData || []).map((q) => ({
-              id: q.id,
-              text: q.question_text,
-              options: Array.isArray(q.options) ? q.options : [],
-              correctAnswer: parseInt(q.correct_answer, 10) || 0,
-              explanation: q.explanation,
-              subject: testData.subject,
-              topic: q.topic,
-              difficulty: q.difficulty,
-              weightage: q.weightage || q.marks || 1,
-              section: section.id
-            }));
+            const questions = (questionData || []).map((q) => {
+              let parsedOptions: string[] = [];
+              try {
+                parsedOptions = typeof q.options === 'string' ? JSON.parse(q.options) : 
+                              Array.isArray(q.options) ? q.options : [];
+              } catch (e) {
+                console.error('Error parsing options:', e);
+                parsedOptions = [];
+              }
+              
+              return {
+                id: q.id,
+                text: q.question_text,
+                options: parsedOptions,
+                correctAnswer: parseInt(q.correct_answer, 10) || 0,
+                explanation: q.explanation,
+                subject: testData.subject,
+                topic: q.topic,
+                difficulty: q.difficulty,
+                weightage: q.weightage || q.marks || 1,
+                section: section.id
+              };
+            });
 
             return {
               id: section.id,
@@ -522,7 +730,7 @@ export const ExamService = {
       );
 
       // Filter out any null sections
-      const validSections = sections.filter(Boolean);
+      const validSections = sections.filter((section): section is Section => section !== null);
 
       if (validSections.length === 0) {
         console.error('No valid sections found after processing');
