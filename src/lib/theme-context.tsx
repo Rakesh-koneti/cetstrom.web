@@ -11,23 +11,27 @@ const ThemeContext = createContext<ThemeContextType | undefined>(undefined);
 
 export function ThemeProvider({ children }: { children: React.ReactNode }) {
   const [theme, setTheme] = useState<Theme>(() => {
-    // Check local storage first
+    // Check for saved theme preference
     const savedTheme = localStorage.getItem('theme');
-    if (savedTheme === 'light' || savedTheme === 'dark') {
-      return savedTheme;
-    }
-    // Check system preference
-    if (window.matchMedia('(prefers-color-scheme: dark)').matches) {
-      return 'dark';
-    }
-    return 'light';
+    // Check for system preference
+    const systemTheme = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+    return (savedTheme as Theme) || systemTheme;
   });
 
   useEffect(() => {
-    const root = window.document.documentElement;
-    root.classList.remove('light', 'dark');
-    root.classList.add(theme);
+    // Update localStorage and document class when theme changes
     localStorage.setItem('theme', theme);
+    if (theme === 'dark') {
+      document.documentElement.classList.add('dark');
+      // Set orange as primary color in dark mode
+      document.documentElement.style.setProperty('--primary', '#f97316'); // orange-500
+      document.documentElement.style.setProperty('--primary-hover', '#fb923c'); // orange-400
+    } else {
+      document.documentElement.classList.remove('dark');
+      // Reset primary color in light mode
+      document.documentElement.style.setProperty('--primary', '#6366f1'); // indigo-500
+      document.documentElement.style.setProperty('--primary-hover', '#818cf8'); // indigo-400
+    }
   }, [theme]);
 
   // Listen for system theme changes
@@ -41,13 +45,8 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
     return () => mediaQuery.removeEventListener('change', handleChange);
   }, []);
 
-  const value = {
-    theme,
-    setTheme,
-  };
-
   return (
-    <ThemeContext.Provider value={value}>
+    <ThemeContext.Provider value={{ theme, setTheme }}>
       {children}
     </ThemeContext.Provider>
   );

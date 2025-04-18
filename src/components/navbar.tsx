@@ -18,6 +18,7 @@ export function Navbar() {
 
   const navItems = [
     { href: '/', label: 'Home' },
+    { href: '/exams', label: 'Practice Tests' },
     { href: '/mock-tests', label: 'Mock Tests' },
     { href: '/previous-year-papers', label: 'Previous Papers' },
     { href: '/about', label: 'About' },
@@ -30,7 +31,7 @@ export function Navbar() {
         <div className="flex justify-between h-16">
           <div className="flex items-center">
             <Link to="/" className="flex-shrink-0 flex items-center" onClick={closeMenu}>
-              <span className="text-xl font-bold bg-gradient-to-r from-purple-600 to-pink-600 text-transparent bg-clip-text">
+              <span className="text-xl font-bold bg-gradient-to-r from-orange-500 to-orange-600 dark:from-orange-400 dark:to-orange-500 text-transparent bg-clip-text">
                 CETStrom
               </span>
             </Link>
@@ -42,7 +43,7 @@ export function Navbar() {
               <Link
                 key={item.href}
                 to={item.href}
-                className="px-3 py-2 rounded-md text-sm font-medium text-gray-700 dark:text-gray-200 hover:text-purple-600 dark:hover:text-purple-400 transition-colors"
+                className="px-3 py-2 rounded-md text-sm font-medium text-gray-700 dark:text-gray-200 hover:text-orange-500 dark:hover:text-orange-400 transition-colors"
               >
                 {item.label}
               </Link>
@@ -51,9 +52,13 @@ export function Navbar() {
               variant="ghost"
               size="icon"
               onClick={toggleTheme}
-              className="ml-2 rounded-full"
+              className="ml-2 rounded-full hover:bg-orange-100 dark:hover:bg-orange-900/20"
             >
-              {isDark ? <Sun className="h-5 w-5" /> : <Moon className="h-5 w-5" />}
+              {isDark ? (
+                <Sun className="h-5 w-5 text-orange-500" />
+              ) : (
+                <Moon className="h-5 w-5 text-orange-500" />
+              )}
             </Button>
           </div>
 
@@ -63,13 +68,17 @@ export function Navbar() {
               variant="ghost"
               size="icon"
               onClick={toggleTheme}
-              className="mr-2 rounded-full"
+              className="mr-2 rounded-full hover:bg-orange-100 dark:hover:bg-orange-900/20"
             >
-              {isDark ? <Sun className="h-5 w-5" /> : <Moon className="h-5 w-5" />}
+              {isDark ? (
+                <Sun className="h-5 w-5 text-orange-500" />
+              ) : (
+                <Moon className="h-5 w-5 text-orange-500" />
+              )}
             </Button>
             <button
               onClick={toggleMenu}
-              className="inline-flex items-center justify-center p-2 rounded-md text-gray-700 dark:text-gray-200 hover:text-purple-600 dark:hover:text-purple-400 focus:outline-none"
+              className="inline-flex items-center justify-center p-2 rounded-md text-gray-700 dark:text-gray-200 hover:text-orange-500 dark:hover:text-orange-400 focus:outline-none"
             >
               {isOpen ? (
                 <X className="block h-6 w-6" />
@@ -88,7 +97,7 @@ export function Navbar() {
             <Link
               key={item.href}
               to={item.href}
-              className="block px-3 py-2 rounded-md text-base font-medium text-gray-700 dark:text-gray-200 hover:text-purple-600 dark:hover:text-purple-400 transition-colors"
+              className="block px-3 py-2 rounded-md text-base font-medium text-gray-700 dark:text-gray-200 hover:text-orange-500 dark:hover:text-orange-400 transition-colors"
               onClick={closeMenu}
             >
               {item.label}
