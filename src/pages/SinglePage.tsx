@@ -27,7 +27,7 @@ import {
   Filter
 } from 'lucide-react';
 
-export function HomePage() {
+export function SinglePage() {
   const { theme } = useTheme();
   const isDark = theme === 'dark';
   const navigate = useNavigate();
@@ -235,8 +235,8 @@ export function HomePage() {
               </div>
 
               <div className="mt-6">
-                <Link
-                  to={`/exam/${exam.id}`}
+                <button
+                  onClick={() => navigate(`/exam/${exam.id}`)}
                   className={`w-full inline-flex items-center justify-center px-4 py-2 rounded-lg ${
                     isDark
                       ? 'bg-violet-600 text-white hover:bg-violet-500'
@@ -245,7 +245,7 @@ export function HomePage() {
                 >
                   Start Test
                   <ChevronRight className="ml-2 h-4 w-4" />
-                </Link>
+                </button>
               </div>
             </div>
           ))}
@@ -357,18 +357,18 @@ export function HomePage() {
                     {year} Papers
                   </h3>
                   <div className="mt-4 space-y-2">
-                    <Link
-                      to={`/papers/engineering/${year}`}
+                    <button
+                      onClick={() => navigate(`/papers/engineering/${year}`)}
                       className="block text-violet-600 hover:text-violet-500"
                     >
                       Engineering Papers
-                    </Link>
-                    <Link
-                      to={`/papers/pharmacy/${year}`}
+                    </button>
+                    <button
+                      onClick={() => navigate(`/papers/pharmacy/${year}`)}
                       className="block text-violet-600 hover:text-violet-500"
                     >
                       Pharmacy Papers
-                    </Link>
+                    </button>
                   </div>
                 </div>
               ))}
@@ -512,4 +512,4 @@ export function HomePage() {
       </main>
     </div>
   );
-}
+} 
