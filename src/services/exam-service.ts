@@ -1,6 +1,116 @@
 import { supabase } from '../lib/supabase';
 import { Exam, Section, Question, DifficultyLevel, Stream } from '../lib/types';
 
+const practiceTests = {
+  engineering: [
+    {
+      id: 'eng-practice-1',
+      title: 'Engineering Practice Test 1',
+      stream: 'engineering',
+      category: 'daily',
+      subject: 'mathematics',
+      scheduledDate: new Date().toISOString(),
+      duration: 60,
+      difficulty: 'medium',
+      status: 'active',
+      sections: [
+        {
+          id: 'math-section-1',
+          name: 'Mathematics Section 1',
+          instructions: 'Solve the following problems. Each question carries 4 marks.',
+          subject: 'mathematics',
+          negativeMarking: 1,
+          questions: [
+            {
+              id: 'math-q1',
+              text: 'If a + b = 5 and ab = 6, find the value of a² + b².',
+              options: ['13', '25', '11', '17'],
+              correctAnswer: 0,
+              explanation: 'Using (a + b)² = a² + b² + 2ab, we get: 25 = a² + b² + 12, so a² + b² = 13',
+              subject: 'mathematics',
+              topic: 'Algebra',
+              difficulty: 'medium',
+              weightage: 4
+            },
+            {
+              id: 'math-q2',
+              text: 'What is the derivative of x²sin(x)?',
+              options: [
+                '2xsin(x) + x²cos(x)',
+                'x²sin(x) + 2xcos(x)',
+                '2xsin(x) - x²cos(x)',
+                '2xsin(x)'
+              ],
+              correctAnswer: 0,
+              explanation: 'Using product rule: d/dx[x²sin(x)] = x² d/dx[sin(x)] + sin(x) d/dx[x²]',
+              subject: 'mathematics',
+              topic: 'Calculus',
+              difficulty: 'medium',
+              weightage: 4
+            }
+          ]
+        }
+      ],
+      markingScheme: {
+        defaultWeightage: 4,
+        defaultNegativeMarking: 1,
+        passingPercentage: 35
+      }
+    }
+  ],
+  pharmacy: [
+    {
+      id: 'pharm-practice-1',
+      title: 'Pharmacy Practice Test 1',
+      stream: 'pharmacy',
+      category: 'daily',
+      subject: 'chemistry',
+      scheduledDate: new Date().toISOString(),
+      duration: 45,
+      difficulty: 'medium',
+      status: 'active',
+      sections: [
+        {
+          id: 'chem-section-1',
+          name: 'Chemistry Section 1',
+          instructions: 'Answer all questions. Each question carries 4 marks.',
+          subject: 'chemistry',
+          negativeMarking: 1,
+          questions: [
+            {
+              id: 'chem-q1',
+              text: 'Which of the following is a strong acid?',
+              options: ['HCl', 'CH₃COOH', 'H₂CO₃', 'H₂S'],
+              correctAnswer: 0,
+              explanation: 'HCl (Hydrochloric acid) is a strong acid as it completely dissociates in water.',
+              subject: 'chemistry',
+              topic: 'Acids and Bases',
+              difficulty: 'medium',
+              weightage: 4
+            },
+            {
+              id: 'chem-q2',
+              text: 'What is the IUPAC name of CH₃-CH₂-CHO?',
+              options: ['Propanal', 'Propanone', 'Ethanol', 'Ethanal'],
+              correctAnswer: 0,
+              explanation: 'CH₃-CH₂-CHO is an aldehyde with 3 carbons, hence it is named propanal.',
+              subject: 'chemistry',
+              topic: 'Organic Chemistry',
+              difficulty: 'medium',
+              weightage: 4
+            }
+          ]
+        }
+      ],
+      markingScheme: {
+        defaultWeightage: 4,
+        defaultNegativeMarking: 1,
+        passingPercentage: 35
+      }
+    }
+  ]
+};
+
 export interface ExamCreateInput {
   title: string;
   stream: Stream;
@@ -214,17 +324,56 @@ export const ExamService = {
       );
 
       // Filter out any null exams (from errors)
-      return exams.filter(Boolean) as Exam[];
+      const filteredExams = exams.filter(Boolean) as Exam[];
+
+      // Add practice tests based on the stream filter
+      let practiceExams: Exam[] = [];
+      if (filters?.stream) {
+        practiceExams = practiceTests[filters.stream] || [];
+      } else {
+        // If no stream filter, include all practice tests
+        practiceExams = [...practiceTests.engineering, ...practiceTests.pharmacy];
+      }
+
+      // Apply subject and difficulty filters to practice tests if needed
+      if (filters?.subject || filters?.difficulty) {
+        practiceExams = practiceExams.filter(exam => {
+          const matchesSubject = !filters.subject || exam.subject === filters.subject;
+          const matchesDifficulty = !filters.difficulty || exam.difficulty === filters.difficulty;
+          return matchesSubject && matchesDifficulty;
+        });
+      }
+
+      // Combine database exams with practice tests
+      const allExams = [...filteredExams, ...practiceExams];
+
+      // Cache the combined results
+      if (filters?.stream) {
+        localStorage.setItem(`stream_exams_${filters.stream}`, JSON.stringify(allExams));
+      }
+
+      return allExams;
     } catch (error) {
       console.error('Error in getExams:', error);
 
-      // Try to get cached data
-      const cachedExams = localStorage.getItem('exams_cache');
-      if (cachedExams) {
-        return JSON.parse(cachedExams);
+      // If database query fails, return practice tests
+      let practiceExams: Exam[] = [];
+      if (filters?.stream) {
+        practiceExams = practiceTests[filters.stream] || [];
+      } else {
+        practiceExams = [...practiceTests.engineering, ...practiceTests.pharmacy];
       }
 
-      return [];
+      // Apply filters if needed
+      if (filters?.subject || filters?.difficulty) {
+        practiceExams = practiceExams.filter(exam => {
+          const matchesSubject = !filters.subject || exam.subject === filters.subject;
+          const matchesDifficulty = !filters.difficulty || exam.difficulty === filters.difficulty;
+          return matchesSubject && matchesDifficulty;
+        });
+      }
+
+      return practiceExams;
     }
   },
 
@@ -233,7 +382,9 @@ export const ExamService = {
    */
   async getExamById(id: string): Promise<Exam | null> {
     try {
-      const { data, error } = await supabase
+      console.log('Fetching exam data from Supabase for ID:', id);
+      
+      const { data: testData, error: testError } = await supabase
         .from('tests')
         .select(`
           id,
@@ -260,14 +411,18 @@ export const ExamService = {
         .eq('id', id)
         .single();
 
-      if (error) {
-        throw error;
+      if (testError) {
+        console.error('Error fetching test data:', testError);
+        throw testError;
       }
 
-      if (!data) {
+      if (!testData) {
+        console.error('No test data found for ID:', id);
         return null;
       }
 
+      console.log('Fetching sections for exam:', id);
+      
       // Get sections for this exam
       const { data: sectionData, error: sectionError } = await supabase
         .from('test_sections')
@@ -287,117 +442,118 @@ export const ExamService = {
 
       if (sectionError) {
         console.error('Error fetching sections:', sectionError);
-        return null;
+        throw sectionError;
       }
 
+      if (!sectionData || sectionData.length === 0) {
+        console.error('No sections found for exam:', id);
+        return {
+          ...testData,
+          sections: [],
+          totalQuestions: 0,
+          markingScheme: testData.marking_schemes?.[0] || {
+            defaultWeightage: 1,
+            defaultNegativeMarking: 0,
+            passingPercentage: 35
+          }
+        };
+      }
+
+      console.log('Fetching questions for exam sections');
+      
       // Get questions for each section
-      const sections: Section[] = await Promise.all(
-        (sectionData || []).map(async (sectionJoin) => {
+      const sections = await Promise.all(
+        sectionData.map(async (sectionJoin) => {
           const section = sectionJoin.sections;
-
-          const { data: questionData, error: questionError } = await supabase
-            .from('questions')
-            .select(`
-              id,
-              question_text,
-              options,
-              correct_answer,
-              explanation,
-              question_type,
-              difficulty,
-              topic,
-              weightage,
-              marks
-            `)
-            .eq('section_id', section.id);
-
-          if (questionError) {
-            console.error('Error fetching questions:', questionError);
+          if (!section) {
+            console.error('Invalid section data:', sectionJoin);
             return null;
           }
 
-          // Transform questions to match our Question type
-          const questions: Question[] = (questionData || []).map((q) => ({
-            id: q.id,
-            text: q.question_text,
-            options: Array.isArray(q.options) ? q.options :
-              (typeof q.options === 'string' ? JSON.parse(q.options) :
-               typeof q.options === 'object' ? Object.values(q.options) : []),
-            correctAnswer: parseInt(q.correct_answer, 10) || 0,
-            explanation: q.explanation,
-            subject: data.subject,
-            topic: q.topic,
-            difficulty: q.difficulty as DifficultyLevel,
-            weightage: q.weightage || q.marks || 1,
-            section: section.id
-          }));
+          try {
+            const { data: questionData, error: questionError } = await supabase
+              .from('questions')
+              .select(`
+                id,
+                question_text,
+                options,
+                correct_answer,
+                explanation,
+                question_type,
+                difficulty,
+                topic,
+                weightage,
+                marks
+              `)
+              .eq('section_id', section.id);
 
-          return {
-            id: section.id,
-            name: section.name,
-            instructions: section.instructions,
-            subject: section.subject,
-            negativeMarking: section.negative_marking || 0,
-            questions
-          };
+            if (questionError) {
+              console.error('Error fetching questions for section:', section.id, questionError);
+              throw questionError;
+            }
+
+            // Transform questions
+            const questions = (questionData || []).map((q) => ({
+              id: q.id,
+              text: q.question_text,
+              options: Array.isArray(q.options) ? q.options : [],
+              correctAnswer: parseInt(q.correct_answer, 10) || 0,
+              explanation: q.explanation,
+              subject: testData.subject,
+              topic: q.topic,
+              difficulty: q.difficulty,
+              weightage: q.weightage || q.marks || 1,
+              section: section.id
+            }));
+
+            return {
+              id: section.id,
+              name: section.name,
+              instructions: section.instructions,
+              subject: section.subject,
+              negativeMarking: section.negative_marking || 0,
+              questions
+            };
+          } catch (error) {
+            console.error('Error processing section:', section.id, error);
+            return null;
+          }
         })
       );
 
-      // Filter out any null sections (from errors)
-      const validSections = sections.filter(Boolean) as Section[];
+      // Filter out any null sections
+      const validSections = sections.filter(Boolean);
 
-      // Calculate total questions
-      const totalQuestions = validSections.reduce(
-        (sum, section) => sum + section.questions.length,
-        0
-      );
-
-      const markingScheme = data.marking_schemes?.[0] || {
-        default_weightage: 1,
-        default_negative_marking: 0,
-        passing_percentage: 35
-      };
-
-      const exam: Exam = {
-        id: data.id,
-        title: data.title,
-        stream: data.stream as Stream,
-        category: data.category as 'daily' | 'weekly' | 'monthly',
-        subject: data.subject,
-        scheduledDate: data.scheduled_date,
-        duration: data.duration,
-        totalQuestions,
-        sections: validSections,
-        difficulty: data.difficulty as DifficultyLevel,
-        status: data.status as 'scheduled' | 'completed',
-        createdAt: data.created_at,
-        notifications: {
-          reminderBefore: data.reminder_before || 60,
-          enabled: data.notifications_enabled || true
-        },
-        markingScheme: {
-          defaultWeightage: markingScheme.default_weightage,
-          defaultNegativeMarking: markingScheme.default_negative_marking,
-          passingPercentage: markingScheme.passing_percentage
-        }
-      };
-
-      // Cache the exam
-      localStorage.setItem(`exam_${id}_cache`, JSON.stringify(exam));
-
-      return exam;
-    } catch (error) {
-      console.error('Error in getExamById:', error);
-
-      // Try to get cached data
-      const cachedExam = localStorage.getItem(`exam_${id}_cache`);
-      if (cachedExam) {
-        return JSON.parse(cachedExam);
+      if (validSections.length === 0) {
+        console.error('No valid sections found after processing');
       }
 
-      // Fallback to localStorage exams
-      const exams = JSON.parse(localStorage.getItem('exams') || '[]');
-      return exams.find((e: Exam) => e.id === id) || null;
+      console.log('Exam data processed successfully');
+      
+      return {
+        id: testData.id,
+        title: testData.title,
+        stream: testData.stream,
+        category: testData.category,
+        subject: testData.subject,
+        scheduledDate: testData.scheduled_date,
+        duration: testData.duration,
+        totalQuestions: validSections.reduce(
+          (sum, section) => sum + (section?.questions?.length || 0),
+          0
+        ),
+        sections: validSections,
+        difficulty: testData.difficulty,
+        status: testData.status,
+        markingScheme: testData.marking_schemes?.[0] || {
+          defaultWeightage: 1,
+          defaultNegativeMarking: 0,
+          passingPercentage: 35
+        }
+      };
+    } catch (error) {
+      console.error('Error in getExamById:', error);
+      throw error;
     }
   },
 

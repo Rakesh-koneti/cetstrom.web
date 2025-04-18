@@ -17,7 +17,7 @@ export function ExamPage() {
   const { examId } = useParams();
   const navigate = useNavigate();
   const { theme } = useTheme();
-  const { user } = useAuth();
+  const { user, isInitialized } = useAuth();
   const isDark = theme === 'dark';
   const [exam, setExam] = useState<Exam | null>(null);
   const [currentSection, setCurrentSection] = useState(0);
@@ -32,21 +32,43 @@ export function ExamPage() {
     // Load exam data from database
     const loadExam = async () => {
       if (!examId) {
+        console.error('No exam ID provided');
         setError('Invalid exam ID');
         setIsLoading(false);
         return;
       }
 
       try {
+        console.log('Fetching exam with ID:', examId);
+        
+        // First try to load from localStorage for practice tests
+        const cachedExams = localStorage.getItem('stream_exams_engineering') || localStorage.getItem('stream_exams_pharmacy');
+        if (cachedExams) {
+          const allExams = JSON.parse(cachedExams);
+          const cachedExam = allExams.find((e: Exam) => e.id === examId);
+          if (cachedExam) {
+            console.log('Found exam in cache:', cachedExam);
+            setExam(cachedExam);
+            setTimeLeft(cachedExam.duration * 60);
+            setIsLoading(false);
+            return;
+          }
+        }
+
+        // If not found in cache, try loading from database
         const currentExam = await ExamService.getExamById(examId);
 
         if (!currentExam) {
+          console.error('Exam not found for ID:', examId);
           setError('Exam not found');
           setIsLoading(false);
           return;
         }
 
+        console.log('Exam data:', currentExam);
+
         if (!currentExam.sections || currentExam.sections.length === 0) {
+          console.error('Exam has no sections:', examId);
           setError('This exam has no questions');
           setIsLoading(false);
           return;
@@ -61,6 +83,7 @@ export function ExamPage() {
         }
 
         if (!hasQuestions) {
+          console.error('Exam has no questions in any section:', examId);
           setError('This exam has no questions');
           setIsLoading(false);
           return;
@@ -69,6 +92,7 @@ export function ExamPage() {
         setExam(currentExam);
         setTimeLeft(currentExam.duration * 60);
         setIsLoading(false);
+        console.log('Exam loaded successfully:', currentExam.title);
       } catch (err) {
         console.error('Error loading exam:', err);
         setError('Failed to load exam. Please try again.');
@@ -188,21 +212,35 @@ export function ExamPage() {
 
   if (error) {
     return (
-      <div className="flex flex-col items-center justify-center min-h-screen">
-        <div className={`text-center ${isDark ? 'text-white' : 'text-gray-900'}`}>
+      <div className="flex flex-col items-center justify-center min-h-screen p-4 bg-white dark:bg-gray-900">
+        <div className={`text-center max-w-md w-full p-6 rounded-lg shadow-lg ${
+          isDark ? 'bg-gray-800 text-white' : 'bg-white text-gray-900'
+        }`}>
           <AlertTriangle className="h-12 w-12 mx-auto mb-4 text-yellow-500" />
-          <h2 className="text-2xl font-bold mb-2">Error</h2>
-          <p className="text-lg">{error}</p>
-          <button
-            onClick={() => navigate('/exams')}
-            className={`mt-6 inline-flex items-center gap-2 px-4 py-2 rounded-lg ${
-              isDark
-                ? 'bg-violet-600 text-white hover:bg-violet-500'
-                : 'bg-violet-600 text-white hover:bg-violet-700'
-            }`}
-          >
-            Back to Tests
-          </button>
+          <h2 className="text-2xl font-bold mb-4">Error Loading Exam</h2>
+          <p className="text-lg mb-6">{error}</p>
+          <div className="flex flex-col gap-4">
+            <button
+              onClick={() => window.location.reload()}
+              className={`w-full px-4 py-2 rounded-lg font-medium ${
+                isDark
+                  ? 'bg-violet-600 text-white hover:bg-violet-500'
+                  : 'bg-violet-500 text-white hover:bg-violet-400'
+              }`}
+            >
+              Try Again
+            </button>
+            <button
+              onClick={() => navigate('/exams')}
+              className={`w-full px-4 py-2 rounded-lg font-medium ${
+                isDark
+                  ? 'bg-gray-700 text-white hover:bg-gray-600'
+                  : 'bg-gray-200 text-gray-900 hover:bg-gray-300'
+              }`}
+            >
+              Back to Exams
+            </button>
+          </div>
         </div>
       </div>
     );
@@ -210,9 +248,15 @@ export function ExamPage() {
 
   if (isLoading) {
     return (
-      <div className="flex flex-col items-center justify-center min-h-screen">
-        <Loader2 className={`h-12 w-12 animate-spin mb-4 ${isDark ? 'text-white' : 'text-gray-900'}`} />
-        <p className={isDark ? 'text-white' : 'text-gray-900'}>Loading exam...</p>
+      <div className="flex flex-col items-center justify-center min-h-screen bg-white dark:bg-gray-900">
+        <Loader2 className={`h-8 w-8 animate-spin ${
+          isDark ? 'text-white' : 'text-gray-900'
+        }`} />
+        <p className={`mt-4 text-lg ${
+          isDark ? 'text-white' : 'text-gray-900'
+        }`}>
+          Loading exam...
+        </p>
       </div>
     );
   }
