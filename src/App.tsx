@@ -3,6 +3,7 @@ import { ThemeProvider } from './lib/theme-context';
 import { AuthProvider } from './lib/auth-context';
 import { Navbar } from './components/navbar';
 import { AppRoutes } from './routes';
+import { GrandMockTestPopup } from './components/GrandMockTestPopup';
 
 export default function App() {
   return (
@@ -14,6 +15,7 @@ export default function App() {
             <main className="min-h-[calc(100vh-4rem)]">
               <AppRoutes />
             </main>
+            <GrandMockTestPopup />
           </AuthProvider>
         </Router>
       </div>
