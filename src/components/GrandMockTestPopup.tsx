@@ -5,14 +5,8 @@ export function GrandMockTestPopup() {
   const [isVisible, setIsVisible] = useState(false);
 
   useEffect(() => {
-    // Check if popup was shown in the last 24 hours
-    const lastShown = localStorage.getItem('popupLastShown');
-    const now = new Date().getTime();
-    
-    if (!lastShown || (now - parseInt(lastShown)) > 24 * 60 * 60 * 1000) {
-      setIsVisible(true);
-      localStorage.setItem('popupLastShown', now.toString());
-    }
+    // Show popup on every visit
+    setIsVisible(true);
   }, []);
 
   if (!isVisible) return null;
