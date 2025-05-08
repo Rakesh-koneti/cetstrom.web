@@ -20,6 +20,7 @@ export function Navbar() {
     { href: '/', label: 'Home' },
     { href: '/exams', label: 'Practice Tests' },
     { href: '/mock-tests', label: 'Mock Tests' },
+    { href: '/ipe-weightage', label: 'IPE Weightage' },
     { href: '/previous-year-papers', label: 'Previous Papers' },
     { href: '/about', label: 'About' },
     { href: '/contact', label: 'Contact' },
