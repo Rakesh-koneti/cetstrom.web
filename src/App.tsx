@@ -4,6 +4,7 @@ import { AuthProvider } from './lib/auth-context';
 import { Navbar } from './components/navbar';
 import { AppRoutes } from './routes';
 import { GrandMockTestPopup } from './components/GrandMockTestPopup';
+import { VisitorCounter } from './components/VisitorCounter';
 
 export default function App() {
   return (
@@ -16,6 +17,7 @@ export default function App() {
               <AppRoutes />
             </main>
             <GrandMockTestPopup />
+            <VisitorCounter />
           </AuthProvider>
         </Router>
       </div>
