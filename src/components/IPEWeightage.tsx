@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { useTheme } from '../lib/theme-context';
-import { Calculator, BookOpen, GraduationCap, Plus, Minus } from 'lucide-react';
+import { Calculator, BookOpen, GraduationCap, Plus, Minus, CheckCircle, RefreshCw } from 'lucide-react';
 
 interface WeightageInfo {
   subject: string;
@@ -116,6 +116,7 @@ export function IPEWeightage() {
     physicsPracticalBIPC: '',
     chemistryPracticalBIPC: ''
   });
+  const [isSubmitted, setIsSubmitted] = useState(false);
 
   const calculateTotalMarks = () => {
     if (stream === 'MPC') {
@@ -151,6 +152,40 @@ export function IPEWeightage() {
       const clampedValue = Math.min(Math.max(0, numValue), maxValue);
       setMarks(prev => ({ ...prev, [field]: clampedValue.toString() }));
     }
+  };
+
+  const handleSubmit = () => {
+    // Here you can add any submission logic if needed
+    setIsSubmitted(true);
+  };
+
+  const handleNewEntry = () => {
+    setMarks({
+      // Reset all marks to empty strings
+      maths1A: '',
+      maths1B: '',
+      physics1: '',
+      chemistry1: '',
+      maths2A: '',
+      maths2B: '',
+      physics2: '',
+      chemistry2: '',
+      physicsPractical: '',
+      chemistryPractical: '',
+      botany1: '',
+      zoology1: '',
+      physics1BIPC: '',
+      chemistry1BIPC: '',
+      botany2: '',
+      zoology2: '',
+      physics2BIPC: '',
+      chemistry2BIPC: '',
+      botanyPractical: '',
+      zoologyPractical: '',
+      physicsPracticalBIPC: '',
+      chemistryPracticalBIPC: ''
+    });
+    setIsSubmitted(false);
   };
 
   return (
@@ -699,8 +734,8 @@ export function IPEWeightage() {
             </>
           )}
 
-          {/* Results */}
-          <div className={`p-4 rounded-lg ${
+          {/* Results Section */}
+          <div className={`p-4 rounded-lg mt-4 ${
             isDark ? 'bg-gray-600' : 'bg-white'
           }`}>
             <div className="grid grid-cols-2 gap-4">
@@ -729,6 +764,51 @@ export function IPEWeightage() {
                 </p>
               </div>
             </div>
+
+            {/* Submit and New Entry Buttons */}
+            <div className="mt-6 flex gap-4">
+              {!isSubmitted ? (
+                <button
+                  onClick={handleSubmit}
+                  className={`flex items-center gap-2 px-4 py-2 rounded-md text-sm font-medium transition-colors ${
+                    isDark
+                      ? 'bg-orange-500 text-white hover:bg-orange-600'
+                      : 'bg-orange-500 text-white hover:bg-orange-600'
+                  }`}
+                >
+                  <CheckCircle className="h-4 w-4" />
+                  Submit
+                </button>
+              ) : (
+                <button
+                  onClick={handleNewEntry}
+                  className={`flex items-center gap-2 px-4 py-2 rounded-md text-sm font-medium transition-colors ${
+                    isDark
+                      ? 'bg-green-500 text-white hover:bg-green-600'
+                      : 'bg-green-500 text-white hover:bg-green-600'
+                  }`}
+                >
+                  <RefreshCw className="h-4 w-4" />
+                  New Entry
+                </button>
+              )}
+            </div>
+
+            {/* Success Message */}
+            {isSubmitted && (
+              <div className={`mt-4 p-4 rounded-md ${
+                isDark ? 'bg-green-900/50' : 'bg-green-50'
+              }`}>
+                <div className="flex items-center gap-2">
+                  <CheckCircle className="h-5 w-5 text-green-500" />
+                  <p className={`text-sm ${
+                    isDark ? 'text-green-300' : 'text-green-700'
+                  }`}>
+                    Your IPE marks have been calculated successfully! You can start a new entry or view the weightage information below.
+                  </p>
+                </div>
+              </div>
+            )}
           </div>
         </div>
 
