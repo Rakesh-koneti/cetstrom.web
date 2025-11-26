@@ -464,7 +464,10 @@ export function HomePage() {
           </p>
           <div className="inline-flex items-center justify-center space-x-2 text-base md:text-lg font-medium mb-8 bg-white/15 backdrop-blur-md px-6 py-3 rounded-full shadow-lg border border-white/30">
             <Clock className="w-5 h-5" />
-            <span>Next Mock Test: <span className="font-semibold text-amber-200">20th March 2026</span></span>
+            <span>
+              Next Mock Test:{' '}
+              <span className="font-semibold text-amber-200">19th April 2026</span>
+            </span>
           </div>
           <div>
             <Link
