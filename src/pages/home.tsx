@@ -441,7 +441,7 @@ export function HomePage() {
               </button>
               {commentSubmitted && (
                 <span className={`text-sm ${isDark ? 'text-green-300' : 'text-green-600'}`}>
-                  Thank you for your feedback! (Currently stored locally.)
+                  Thanks for your feedback!
                 </span>
               )}
             </div>
