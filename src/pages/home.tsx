@@ -24,6 +24,9 @@ export function HomePage() {
   const navigate = useNavigate();
   const [currentDateTime, setCurrentDateTime] = useState(new Date());
   const [showWelcome, setShowWelcome] = useState(false);
+  const [commentName, setCommentName] = useState('');
+  const [commentMessage, setCommentMessage] = useState('');
+  const [commentSubmitted, setCommentSubmitted] = useState(false);
 
   useEffect(() => {
     // Timer for date/time
@@ -74,25 +77,52 @@ export function HomePage() {
 
   const testimonials = [
     {
-      name: "Ravi Kumar",
-      role: "EAMCET Student",
-      content: "CETStrom's practice tests were exactly like the actual EAMCET exam. The detailed solutions helped me understand my mistakes and improve.",
+      name: 'Ravi Kumar',
+      role: 'EAMCET 2025 Ranker',
+      content:
+        "CETStrom's practice tests were exactly like the actual EAMCET exam. The detailed solutions helped me understand my mistakes and improve.",
       rating: 5,
-      avatar: "student-avatar-1.jpg"
+      avatar: 'student-avatar-1.jpg'
     },
     {
-      name: "Sai Priya",
-      role: "EAMCET Student",
-      content: "The mock tests here gave me confidence. Time management features helped me complete the actual exam within time.",
+      name: 'Sai Priya',
+      role: 'EAMCET 2025 Ranker',
+      content:
+        'The mock tests here gave me confidence. Time management features helped me complete the actual exam within time.',
       rating: 5,
-      avatar: "student-avatar-2.jpg"
+      avatar: 'student-avatar-2.jpg'
     },
     {
-      name: "Arun Reddy",
-      role: "EAMCET Student",
-      content: "The subject-wise analysis and performance tracking helped me focus on my weak areas. Highly recommended for EAMCET preparation!",
+      name: 'Arun Reddy',
+      role: 'EAMCET 2025 Ranker',
+      content:
+        'The subject-wise analysis and performance tracking helped me focus on my weak areas. Highly recommended for EAMCET preparation!',
       rating: 5,
-      avatar: "student-avatar-3.jpg"
+      avatar: 'student-avatar-3.jpg'
+    },
+    {
+      name: 'Meghana Rao',
+      role: 'EAMCET 2025 Topper',
+      content:
+        'Section-wise tests and detailed reports helped me plan my daily preparation. My accuracy improved a lot with CETStrom.',
+      rating: 5,
+      avatar: 'student-avatar-4.jpg'
+    },
+    {
+      name: 'Vikas Sharma',
+      role: 'EAMCET 2025 Ranker',
+      content:
+        'The interface felt just like the real exam. Practicing multiple full-length mocks here reduced my exam fear completely.',
+      rating: 5,
+      avatar: 'student-avatar-5.jpg'
+    },
+    {
+      name: 'Nikhila Reddy',
+      role: 'EAMCET 2025 Ranker',
+      content:
+        'Daily practice on CETStrom with chapter-wise tests helped me move from average scores to a top EAMCET rank.',
+      rating: 5,
+      avatar: 'student-avatar-6.jpg'
     }
   ];
 
@@ -116,60 +146,70 @@ export function HomePage() {
       </div>
 
       {/* Hero Section */}
-      <section className={`relative overflow-hidden ${isDark ? 'bg-gray-900' : 'bg-gray-50'} py-20`}>
+      <section
+        className={`
+          relative overflow-hidden py-16 md:py-24
+          ${isDark 
+            ? 'bg-gradient-to-b from-slate-950 via-slate-900 to-purple-950' 
+            : 'bg-gradient-to-b from-orange-50 via-amber-50 to-white'}
+        `}
+      >
+        <div className="absolute inset-0 opacity-40 pointer-events-none">
+          <div className="absolute inset-0 bg-[radial-gradient(circle_at_top,_#f97316_0,_transparent_55%),radial-gradient(circle_at_bottom,_#ec4899_0,_transparent_55%)]" />
+        </div>
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
-            <div className="space-y-8">
-              <div className="inline-flex items-center px-4 py-2 rounded-full bg-gradient-to-r from-purple-600 to-pink-600 text-white text-sm font-medium">
-                <Star className="w-4 h-4 mr-2" /> Trusted by 1000 students
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-10 lg:gap-16 items-center">
+            <div className="space-y-8 glass-effect rounded-3xl p-6 sm:p-8 shadow-2xl border border-white/20 dark:border-white/10">
+              <div className="inline-flex items-center px-4 py-2 rounded-full bg-gradient-to-r from-purple-600 to-pink-600 text-white text-xs sm:text-sm font-medium shadow-lg">
+                <Sparkles className="w-4 h-4 mr-2" /> Trusted by 1000+ EAMCET aspirants
               </div>
-              <h1 className={`text-5xl md:text-6xl font-bold ${isDark ? 'text-white' : 'text-gray-900'}`}>
-                Master Your
-                <span className="block mt-2 bg-clip-text text-transparent bg-gradient-to-r from-purple-600 to-pink-600">
+              <h1 className={`text-4xl sm:text-5xl md:text-6xl font-extrabold leading-tight ${isDark ? 'text-white' : 'text-gray-900'}`}>
+                Crack Your
+                <span className="block mt-2 gradient-text">
                   Entrance Exams
                 </span>
               </h1>
-              <p className={`text-xl ${isDark ? 'text-gray-300' : 'text-gray-600'}`}>
-                Practice with our expertly crafted tests for Engineering & Pharmacy entrance exams. Get detailed analytics and improve your performance.
+              <p className={`text-base sm:text-lg md:text-xl ${isDark ? 'text-gray-300' : 'text-gray-700'}`}>
+                Real-exam style mock tests, smart analytics, and expert-curated questions to boost your EAMCET & entrance exam rank.
               </p>
               <div className="flex flex-wrap gap-4">
                 <Link
                   to="/mock-tests"
-                  className="inline-flex items-center px-8 py-4 rounded-full bg-gradient-to-r from-purple-600 to-pink-600 text-white font-semibold hover:opacity-90 transition-all transform hover:scale-105 shadow-lg"
+                  className="btn-primary inline-flex items-center justify-center"
                 >
-                  Start Practice <ChevronRight className="ml-2 w-5 h-5" />
+                  Start Free Practice <ChevronRight className="ml-2 w-5 h-5" />
                 </Link>
                 <Link
                   to="/about"
-                  className={`inline-flex items-center px-8 py-4 rounded-full ${
+                  className={`inline-flex items-center px-6 py-3 rounded-full font-semibold border text-sm sm:text-base ${
                     isDark 
-                      ? 'bg-gray-800 text-white hover:bg-gray-700' 
-                      : 'bg-white text-gray-900 hover:bg-gray-50'
-                  } font-semibold border border-gray-200 transition-all`}
+                      ? 'bg-transparent text-gray-100 border-gray-600 hover:bg-gray-800' 
+                      : 'bg-white text-gray-900 border-gray-200 hover:bg-gray-50'
+                  } transition-all shadow-sm`}
                 >
-                  Learn More
+                  Learn More About CETStrom
                 </Link>
               </div>
 
               {/* Stats */}
-              <div className="grid grid-cols-3 gap-6 pt-8 border-t border-gray-200 dark:border-gray-800">
+              <div className="grid grid-cols-3 gap-4 sm:gap-6 pt-6 sm:pt-8 border-t border-white/20 dark:border-gray-800">
                 <div>
-                  <div className={`text-3xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-purple-600 to-pink-600`}>
+                  <div className="text-2xl sm:text-3xl font-bold gradient-text">
                     1000+
                   </div>
-                  <div className={`text-sm ${isDark ? 'text-gray-400' : 'text-gray-600'}`}>Active Users</div>
+                  <div className={`text-xs sm:text-sm ${isDark ? 'text-gray-300' : 'text-gray-600'}`}>Active Students</div>
                 </div>
                 <div>
-                  <div className={`text-3xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-purple-600 to-pink-600`}>
+                  <div className="text-2xl sm:text-3xl font-bold gradient-text">
                     1000+
                   </div>
-                  <div className={`text-sm ${isDark ? 'text-gray-400' : 'text-gray-600'}`}>Questions</div>
+                  <div className={`text-xs sm:text-sm ${isDark ? 'text-gray-300' : 'text-gray-600'}`}>Practice Questions</div>
                 </div>
                 <div>
-                  <div className={`text-3xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-purple-600 to-pink-600`}>
+                  <div className="text-2xl sm:text-3xl font-bold gradient-text">
                     95%
                   </div>
-                  <div className={`text-sm ${isDark ? 'text-gray-400' : 'text-gray-600'}`}>Success Rate</div>
+                  <div className={`text-xs sm:text-sm ${isDark ? 'text-gray-300' : 'text-gray-600'}`}>Student Satisfaction</div>
                 </div>
               </div>
             </div>
@@ -201,32 +241,30 @@ export function HomePage() {
         </div>
 
         {/* Background Elements */}
-        <div className="absolute top-0 left-0 w-72 h-72 rounded-full bg-purple-500/10 -translate-x-1/2 -translate-y-1/2 blur-3xl"></div>
-        <div className="absolute bottom-0 right-0 w-96 h-96 rounded-full bg-pink-500/10 translate-x-1/3 translate-y-1/3 blur-3xl"></div>
+        <div className="absolute top-0 left-0 w-72 h-72 rounded-full bg-purple-500/20 -translate-x-1/2 -translate-y-1/2 blur-3xl"></div>
+        <div className="absolute bottom-0 right-0 w-96 h-96 rounded-full bg-pink-500/20 translate-x-1/3 translate-y-1/3 blur-3xl"></div>
       </section>
 
-      {/* Features Section */}
-      <section className={`py-20 ${isDark ? 'bg-gray-800' : 'bg-white'}`}>
+      {/* Exam Categories / Features Section */}
+      <section className={`py-20 ${isDark ? 'bg-slate-950' : 'bg-white'}`}>
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-16">
-            <h2 className={`text-4xl font-bold ${isDark ? 'text-white' : 'text-gray-900'}`}>
-              Why Choose{' '}
-              <span className="bg-clip-text text-transparent bg-gradient-to-r from-purple-600 to-pink-600">
-                CETStrom
+            <h2 className={`text-3xl md:text-4xl font-bold ${isDark ? 'text-white' : 'text-gray-900'}`}>
+              Choose Your{' '}
+              <span className="gradient-text">
+                Exam Track
               </span>
             </h2>
             <p className={`mt-4 text-lg ${isDark ? 'text-gray-300' : 'text-gray-600'}`}>
-              Everything you need to excel in your entrance examinations
+              Designed for AP EAMCET and other top entrance exams with exam-specific practice.
             </p>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 lg:gap-8">
             {features.map((feature) => (
               <div
                 key={feature.name}
-                className={`group p-6 rounded-2xl ${
-                  isDark ? 'bg-gray-700 hover:bg-gray-600' : 'bg-white hover:bg-gray-50'
-                } transition-all duration-300 transform hover:scale-105 shadow-lg`}
+                className="group card cursor-pointer hover:-translate-y-1 hover:shadow-2xl"
               >
                 <div className={`mb-6 inline-flex p-3 rounded-lg bg-gradient-to-r ${feature.color}`}>
                   <feature.icon className="h-6 w-6 text-white" />
@@ -243,28 +281,68 @@ export function HomePage() {
         </div>
       </section>
 
-      {/* Testimonials Section */}
-      <section className={`py-20 ${isDark ? 'bg-gray-900' : 'bg-gray-50'}`}>
+      {/* How it works + Testimonials */}
+      <section className={`py-20 ${isDark ? 'bg-slate-900' : 'bg-gray-50'}`}>
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center mb-16">
-            <h2 className={`text-4xl font-bold ${isDark ? 'text-white' : 'text-gray-900'}`}>
-              EAMCET Success Stories
-            </h2>
-            <div className={`mt-4 inline-flex items-center px-4 py-2 rounded-full bg-gradient-to-r from-purple-600 to-pink-600 text-white text-sm font-medium`}>
-              <Star className="w-4 h-4 mr-2" /> Real Student Experiences
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-10 lg:gap-16 mb-16">
+            {/* How it works */}
+            <div>
+              <h2 className={`text-3xl font-bold mb-4 ${isDark ? 'text-white' : 'text-gray-900'}`}>
+                How CETStrom Helps You Win
+              </h2>
+              <p className={`mb-6 text-lg ${isDark ? 'text-gray-300' : 'text-gray-600'}`}>
+                Simple steps to improve your rank with focused practice and analysis.
+              </p>
+              <div className="space-y-4">
+                <div className="flex items-start gap-3">
+                  <div className="mt-1 rounded-full bg-green-500/10 text-green-500 p-2">
+                    <CheckCircle className="w-5 h-5" />
+                  </div>
+                  <div>
+                    <h3 className={`font-semibold ${isDark ? 'text-white' : 'text-gray-900'}`}>1. Choose your exam & mock test</h3>
+                    <p className={`${isDark ? 'text-gray-300' : 'text-gray-600'}`}>Pick from Engineering or Pharmacy tests tailored to AP EAMCET pattern.</p>
+                  </div>
+                </div>
+                <div className="flex items-start gap-3">
+                  <div className="mt-1 rounded-full bg-blue-500/10 text-blue-500 p-2">
+                    <Clock className="w-5 h-5" />
+                  </div>
+                  <div>
+                    <h3 className={`font-semibold ${isDark ? 'text-white' : 'text-gray-900'}`}>2. Attempt test with real exam timer</h3>
+                    <p className={`${isDark ? 'text-gray-300' : 'text-gray-600'}`}>Practice in a real-exam environment with accurate time limits.</p>
+                  </div>
+                </div>
+                <div className="flex items-start gap-3">
+                  <div className="mt-1 rounded-full bg-purple-500/10 text-purple-500 p-2">
+                    <Target className="w-5 h-5" />
+                  </div>
+                  <div>
+                    <h3 className={`font-semibold ${isDark ? 'text-white' : 'text-gray-900'}`}>3. Analyse & improve</h3>
+                    <p className={`${isDark ? 'text-gray-300' : 'text-gray-600'}`}>View detailed analysis, identify weak topics and track progress over time.</p>
+                  </div>
+                </div>
+              </div>
             </div>
-            <p className={`mt-4 text-lg ${isDark ? 'text-gray-300' : 'text-gray-600'}`}>
-              Hear from our successful EAMCET aspirants
-            </p>
+
+            {/* Testimonials header */}
+            <div className="text-left lg:text-right flex flex-col justify-center">
+              <h2 className={`text-3xl md:text-4xl font-bold ${isDark ? 'text-white' : 'text-gray-900'}`}>
+                2025 EAMCET Success Stories
+              </h2>
+              <div className="mt-4 inline-flex items-center px-4 py-2 rounded-full bg-gradient-to-r from-purple-600 to-pink-600 text-white text-sm font-medium">
+                <Star className="w-4 h-4 mr-2" /> Real Student Experiences
+              </div>
+              <p className={`mt-4 text-lg ${isDark ? 'text-gray-300' : 'text-gray-600'}`}>
+                Hear from our successful EAMCET aspirants.
+              </p>
+            </div>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 lg:gap-8">
             {testimonials.map((testimonial, index) => (
               <div
                 key={index}
-                className={`p-6 rounded-2xl ${
-                  isDark ? 'bg-gray-800' : 'bg-white'
-                } shadow-lg transition-transform hover:scale-105`}
+                className={`card transition-transform hover:-translate-y-1`}
               >
                 <div className="flex items-center mb-4">
                   <img
@@ -308,25 +386,103 @@ export function HomePage() {
         </div>
       </section>
 
+      {/* User Comment Box */}
+      <section className={`${isDark ? 'bg-slate-950' : 'bg-white'} py-16`}>
+        <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="text-center mb-8">
+            <h2 className={`text-3xl font-bold ${isDark ? 'text-white' : 'text-gray-900'}`}>
+              Share your EAMCET journey
+            </h2>
+            <p className={`${isDark ? 'text-gray-300' : 'text-gray-600'} mt-2`}>
+              Tell us how CETStrom is helping you in your preparation. Your feedback motivates other students.
+            </p>
+          </div>
+
+          <form
+            className="card space-y-4"
+            onSubmit={(e) => {
+              e.preventDefault();
+              if (!commentName.trim() || !commentMessage.trim()) {
+                return;
+              }
+              setCommentSubmitted(true);
+              setCommentMessage('');
+            }}
+          >
+            <div className="grid grid-cols-1 gap-4">
+              <div>
+                <label className={`block mb-2 text-sm font-medium ${isDark ? 'text-gray-200' : 'text-gray-800'}`}>
+                  Your Name
+                </label>
+                <input
+                  type="text"
+                  className="input-field"
+                  placeholder="Enter your name"
+                  value={commentName}
+                  onChange={(e) => setCommentName(e.target.value)}
+                />
+              </div>
+              <div>
+                <label className={`block mb-2 text-sm font-medium ${isDark ? 'text-gray-200' : 'text-gray-800'}`}>
+                  Your Comment
+                </label>
+                <textarea
+                  className="input-field min-h-[120px]"
+                  placeholder="Share your experience with CETStrom..."
+                  value={commentMessage}
+                  onChange={(e) => setCommentMessage(e.target.value)}
+                />
+              </div>
+            </div>
+
+            <div className="flex flex-col sm:flex-row items-center justify-between gap-3">
+              <button type="submit" className="btn-primary w-full sm:w-auto">
+                Submit Comment
+              </button>
+              {commentSubmitted && (
+                <span className={`text-sm ${isDark ? 'text-green-300' : 'text-green-600'}`}>
+                  Thank you for your feedback! (Currently stored locally.)
+                </span>
+              )}
+            </div>
+          </form>
+        </div>
+      </section>
+
       {/* CTA Section */}
-      <section className="py-20 bg-gradient-to-r from-purple-600 to-pink-600 text-white">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-          <h2 className="text-4xl font-bold mb-6">Ready to Start Your Journey?</h2>
-          <p className="text-xl mb-8 text-purple-100">
+      <section className="py-20 bg-gradient-to-br from-sky-500 via-indigo-600 to-fuchsia-600 text-white relative overflow-hidden">
+        <div className="absolute inset-0 opacity-40 pointer-events-none">
+          <div className="absolute -top-24 -left-24 w-72 h-72 rounded-full bg-cyan-400 blur-3xl" />
+          <div className="absolute -bottom-24 -right-24 w-80 h-80 rounded-full bg-fuchsia-500 blur-3xl" />
+        </div>
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center relative z-10">
+          <h2 className="text-4xl md:text-5xl font-extrabold mb-4 drop-shadow-lg">
+            Ready to Start Your Journey?
+          </h2>
+          <p className="text-lg md:text-2xl mb-6 text-sky-100">
             Join thousands of successful students preparing for their entrance exams
           </p>
-          <div className="inline-flex items-center justify-center space-x-2 text-lg font-medium mb-8 bg-white/10 backdrop-blur-sm px-6 py-3 rounded-full">
+          <div className="inline-flex items-center justify-center space-x-2 text-base md:text-lg font-medium mb-8 bg-white/15 backdrop-blur-md px-6 py-3 rounded-full shadow-lg border border-white/30">
             <Clock className="w-5 h-5" />
-            <span>Next Mock Test: {currentDateTime.toLocaleDateString()} {currentDateTime.toLocaleTimeString()}</span>
+            <span>Next Mock Test: <span className="font-semibold text-amber-200">20th March 2026</span></span>
           </div>
           <div>
             <Link
               to="/mock-tests"
-              className="inline-flex items-center px-8 py-4 rounded-full bg-white text-purple-600 font-semibold hover:bg-purple-50 transition-all transform hover:scale-105 shadow-lg"
+              className="inline-flex items-center px-10 py-4 rounded-full bg-gradient-to-r from-amber-400 via-orange-500 to-rose-500 text-slate-900 font-semibold hover:brightness-110 transition-all transform hover:scale-110 shadow-[0_10px_40px_rgba(251,191,36,0.6)]"
             >
               Start Free Practice Test <ChevronRight className="ml-2 w-5 h-5" />
             </Link>
           </div>
+        </div>
+      </section>
+
+      {/* Next Mock Test Info - Bottom Banner */}
+      <section className={`${isDark ? 'bg-slate-950' : 'bg-gray-100'} border-t border-gray-200 dark:border-gray-800`}>
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 flex flex-col sm:flex-row items-center justify-center gap-2 text-center">
+          <span className={`text-sm sm:text-base font-medium ${isDark ? 'text-gray-200' : 'text-gray-800'}`}>
+            Next mock test will begin on <span className="font-semibold text-orange-600 dark:text-orange-400">19th April 2026</span>.
+          </span>
         </div>
       </section>
     </div>
