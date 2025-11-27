@@ -148,7 +148,11 @@ export function IPEWeightage() {
     }
     const numValue = parseInt(value);
     if (!isNaN(numValue)) {
-      const maxValue = field.includes('Practical') ? 30 : 60;
+      const maxValue = field.includes('Practical')
+        ? 30
+        : field === 'maths1A' || field === 'maths1B'
+        ? 75
+        : 60;
       const clampedValue = Math.min(Math.max(0, numValue), maxValue);
       setMarks(prev => ({ ...prev, [field]: clampedValue.toString() }));
     }
@@ -251,7 +255,7 @@ export function IPEWeightage() {
                 <h4 className={`text-sm font-medium mb-3 ${
                   isDark ? 'text-gray-300' : 'text-gray-700'
                 }`}>
-                  First Year Marks (Max 60 each)
+                  First Year Marks (Maths max 75, others 60)
                 </h4>
                 <div className="grid grid-cols-2 gap-4">
                   <div>
@@ -270,7 +274,7 @@ export function IPEWeightage() {
                           : 'border-gray-300 text-gray-900'
                       } shadow-sm focus:border-orange-500 focus:ring-orange-500 sm:text-sm`}
                       min="0"
-                      max="60"
+                      max="75"
                     />
                   </div>
                   <div>
@@ -289,7 +293,7 @@ export function IPEWeightage() {
                           : 'border-gray-300 text-gray-900'
                       } shadow-sm focus:border-orange-500 focus:ring-orange-500 sm:text-sm`}
                       min="0"
-                      max="60"
+                      max="75"
                     />
                   </div>
                   <div>
