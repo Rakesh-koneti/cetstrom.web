@@ -41,8 +41,8 @@ type Stream = 'MPC' | 'BIPC';
 const weightageData: WeightageInfo[] = [
   {
     subject: 'Mathematics',
-    ipeWeightage: 75,
-    eamcetWeightage: 25,
+    ipeWeightage: 25,
+    eamcetWeightage: 75,
     totalMarks: 100
   },
   {
